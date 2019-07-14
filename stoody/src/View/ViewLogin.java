@@ -55,6 +55,10 @@ public class ViewLogin {
 					//frame.setVisible(false);
 					ViewAddUser.DisplayView();
 				}
+				else {
+					frame.dispose();
+					ViewDisplayEvents.DisplayView();
+				}
 			}  
 		};
 		

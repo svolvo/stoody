@@ -24,7 +24,7 @@ public class Stoody {
 	 * Displays the login view 
 	 */
 	public static void Login() {
-		ViewLogin.DisplayView();	
+		ViewLogin.DisplayView();
 	}
 	
 
