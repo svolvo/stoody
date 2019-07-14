@@ -54,10 +54,7 @@ public class SQLiteDataLayer {
 	         stmt.close();
 	         c.close();
 	      } catch ( Exception e ) {
-	         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-	         System.exit(0);
 	      }
-	      System.out.println("Table created successfully");
 	   }
 	
 	
@@ -92,7 +89,7 @@ public class SQLiteDataLayer {
 		   }   
   	}
 	
-  	
+
   	
   	/**
 	 * Creates the SQL tables required to maintain data between sessions, if they don't already exist.
@@ -113,34 +110,14 @@ public class SQLiteDataLayer {
 	
 	
 	
-	public static void Insert( String username, int id, int role ) {
-	      Connection c = null;
-	      Statement stmt = null;
-	      
-	      try {
-	         Class.forName("org.sqlite.JDBC");
-	         c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
-
-	         stmt = c.createStatement();
-	         String sql = "INSERT INTO USER (ID,NAME,ROLE) " +
-	                        "VALUES (" + id + ", '" + username + "', " + role +");"; 
-	         stmt.executeUpdate(sql);
-
-	         stmt.close();
-	         c.commit();
-	         c.close();
-	      } catch ( Exception e ) {
-	         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-	         System.exit(0);
-	      }
-		}
+	
 	
 	
 	
 	  public static List<RegularUser> SelectUsers(  ) {
 
 		  List<RegularUser> users = new ArrayList<RegularUser>();
-		  /*
+		  
 		  
 		   Connection c = null;
 		   Statement stmt = null;
@@ -148,27 +125,32 @@ public class SQLiteDataLayer {
 		      Class.forName("org.sqlite.JDBC");
 		      c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
 		      c.setAutoCommit(false);
-		      System.out.println("Opened database successfully");
 
 		      stmt = c.createStatement();
-		      ResultSet rs = stmt.executeQuery( "SELECT * FROM USER;" );
+		      ResultSet rs = stmt.executeQuery( "SELECT * FROM user;" );
 		      
 		      while ( rs.next() ) {
-		         int id = rs.getInt("id");
-		         String  name = rs.getString("name");
-		          user = new User(name, id, 123);
-		         users.add(user);
+		         int userId = rs.getInt("id");
+		         int userType = rs.getInt("user_type");
+		         String  firstName = rs.getString("first_name");
+		         String lastName = rs.getString("last_name");
+		         
+		         if (userType == eUserType.student.ordinal())
+		    	  {
+		    		  users.add(new Student(userId, firstName, lastName, ""));
+		    	  }
+		    	  else if (userType == eUserType.teacher.ordinal())
+		    	  {
+		    		  users.add(new Teacher(userId, firstName, lastName, ""));
+		    	  }
+		         
 		      }
 		      rs.close();
 		      stmt.close();
 		      c.close();
 		   } catch ( Exception e ) {
-		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-		      System.exit(0);
 		   }
-		   System.out.println("Operation done successfully");
 		   
-		   */
 		   return users;
 		  }
 
@@ -182,17 +164,52 @@ public class SQLiteDataLayer {
 	 * returns null otherwise.
 	 */
 	public static RegularUser Login(String username, String password) {
-		// TODO Auto-generated method stub
+		RegularUser regularUser = null;
+		String sql = String.format("SELECT * FROM user WHERE id = '%s' AND password = '%s';" , username, password);
 		
-		String sql = String.format("SELECT * FROM USER WHERE USER_NAME = '%s' AND PASSWORD = '%s';" , username, password);
 		
-		return null;
+		ResultSet resultSet = null;
+  		Connection c = null;
+		Statement stmt = null;
+		try {
+	         Class.forName("org.sqlite.JDBC");
+		      c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+		      c.setAutoCommit(false);
+		      stmt = c.createStatement();
+		      resultSet = stmt.executeQuery(sql);
+		      // go to first row
+		      resultSet.next();
+		      
+		      // parse properties
+			  int userType = resultSet.getInt("user_type");
+	    	  int userId = resultSet.getInt("id");
+			  String firstName = resultSet.getString("first_name");
+	    	  String lastName = resultSet.getString("last_name");
+	    	  
+	    	  
+	    	  if (userType == eUserType.student.ordinal())
+	    	  {
+	    		  regularUser = new Student(userId, firstName, lastName, "");
+	    	  }
+	    	  else if (userType == eUserType.teacher.ordinal())
+	    	  {
+	    		  regularUser = new Teacher(userId, firstName, lastName, "");
+	    	  }
+		      
+		      resultSet.close();
+		      stmt.close();
+		      c.close();
+		      
+		   } catch ( Exception e ) {}   
+		
+		
+		return regularUser;
 	}
 
 
 	public static boolean AddUser(RegularUser user) {
 		
-		 String sql = String.format("INSERT INTO USER (id,first_name,last_name,password, user_type) "
+		 String sql = String.format("INSERT INTO user (id,first_name,last_name,password, user_type) "
 		 						  + "VALUES (%d, '%s', '%s', '%s', %d);"
 				 					,user.get_id(), user.get_firstName(), user.get_lastName(), user.get_password(), user.get_userType().ordinal());
 		
@@ -219,8 +236,8 @@ public class SQLiteDataLayer {
 	}
 
 	public static RegularUser GetUserById(int userId) {
-
-		 String sql = String.format("SELECT * FROM USER WHERE ID = %d;" ,userId);
+		 RegularUser regularUser = null;
+		 String sql = String.format("SELECT * FROM user WHERE ID = %d;" ,userId);
 		
 		 
 		 Connection c = null;
@@ -229,39 +246,34 @@ public class SQLiteDataLayer {
 		      Class.forName("org.sqlite.JDBC");
 		      c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
 		      c.setAutoCommit(false);
-		      System.out.println("Opened database successfully");
 
 		      stmt = c.createStatement();
 		      ResultSet rs = stmt.executeQuery(sql);
 		      
 		      //FIRST_NAME,LAST_NAME,PASSWORD, USER_TYPE
 		      while ( rs.next() ) {
-		    	  int userType = rs.getInt("USER_TYPE");
-		    	  String firstName = rs.getString("FIRST_NAME");
-		    	  String lastName = rs.getString("LAST_NAME");
-		    	  String password = rs.getString("PASSWORD");
+		    	  int userType = rs.getInt("user_type");
+		    	  String firstName = rs.getString("first_name");
+		    	  String lastName = rs.getString("last_name");
 
-		    	  
 		    	  if (userType == eUserType.student.ordinal())
 		    	  {
-		    		  rs.close();
-				      stmt.close();
-				      c.close();
-		    		  return new Student(userId, firstName, lastName, password);
+		    		  regularUser = new Student(userId, firstName, lastName, "");
 		    	  }
+		    	  else if (userType == eUserType.teacher.ordinal())
+		    	  {
+		    		  regularUser = new Teacher(userId, firstName, lastName, "");
+		    	  }
+			      
 		      }
 		      rs.close();
 		      stmt.close();
 		      c.close();
 		   } catch ( Exception e ) {
-		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-		      System.exit(0);
 		   }
-		   System.out.println("Operation done successfully");
 		   
 		   
-		
-		return null;
+		return regularUser;
 	}
 
 
