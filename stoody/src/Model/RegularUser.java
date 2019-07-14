@@ -1,23 +1,18 @@
 package Model;
 
-public abstract class RegularUser {
-	
+public abstract class RegularUser extends User{
 
 	// Members
 	private int _id;
-	private String _firstName;
 	private String _lastName;
 	private String _password;
-	private eUserType _userType;
 	
 	// Constructor
 	public RegularUser(int id, String firstName, String lastName, String password, eUserType userType)
 	{
+		super(userType, firstName, password);
 		set_id(id);
-		set_firstName(firstName);
 		set_lastName(lastName);
-		set_password(password);
-		set_userType(userType);
 	}
 
 	public int get_id() {
@@ -36,30 +31,9 @@ public abstract class RegularUser {
 		this._lastName = _lastName;
 	}
 
-	public String get_firstName() {
-		return _firstName;
-	}
 
-	protected void set_firstName(String _firstName) {
-		this._firstName = _firstName;
-	}
 
-	public eUserType get_userType() {
-		return _userType;
-	}
 
-	protected void set_userType(eUserType _userType) {
-		this._userType = _userType;
-	}
-
-	public String get_password() {
-		return _password;
-	}
-
-	public void set_password(String _password) {
-		this._password = _password;
-	}
-	
 	
 	
 	// Methods
