@@ -28,7 +28,7 @@ public class ViewDisplayEvents
     //lists 
     public static int counter = 0;
 	
-    public static JFrame DisplayView() {
+public static JFrame DisplayView() {
 		
 		
 		JFrame frame1 = new JFrame("choose date");
@@ -95,10 +95,11 @@ public class ViewDisplayEvents
 			    	
 			    	for(int i = 0; i < data.length;i++) 
 			    	{
-			    		for(int j = 0; j < data[0].length;j++) 
-			    		{
-			    			data[i][j] = eventList.get(i).getEventType();
-			    		}
+			    		data[i][0] = eventList.get(i).getEventType();
+			    		data[i][1] = eventList.get(i).getTitle();
+			    		data[i][2] = eventList.get(i).getStartDateTime();
+			    		data[i][3] = eventList.get(i).getEndDateTime();
+			    		data[i][4] = eventList.get(i).getLocation();
 			    	}
 			    	
 			    	
