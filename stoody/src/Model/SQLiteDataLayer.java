@@ -1,7 +1,10 @@
 package Model;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 //import stoody.User;
@@ -36,6 +39,33 @@ public class SQLiteDataLayer {
 	
 	
 	
+	
+	public static String GetDateTimeByStringFormat(Date date)
+	{
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
+		return dateFormat.format(date);  
+	}
+	
+	
+	private static boolean ExecuteNonQuery(String sql)
+	{
+  		Connection c = null;
+		Statement stmt = null;
+		
+		try {
+			 Class.forName("org.sqlite.JDBC");
+			 c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+			 c.setAutoCommit(false);
+			 stmt = c.createStatement();
+			 stmt.executeUpdate(sql);
+			 stmt.close();
+			 c.commit();
+			 c.close();
+		 } catch ( Exception e ) {
+			 return false;
+		 }
+		return true;
+	}
 	
 	/**
 	 * Executes a "Create table statement"
@@ -277,6 +307,48 @@ public class SQLiteDataLayer {
 	}
 
 
+	public static boolean AddEvent(StoodyEvent event, int userId) {
 
+		// insert new event to event table
+		 String sql = String.format("INSERT into event (event_type, title, start_date_time, end_date_time, location) VALUES (%d, '%s', '%s', '%s', '%s');", 
+				 event.getEventType().ordinal(), event.getTitle(),  GetDateTimeByStringFormat(event.getStartDateTime()) , GetDateTimeByStringFormat(event.getEndDateTime()), event.getLocation());
 
+		 
+		 boolean result = ExecuteNonQuery(sql);
+		 if (!result)
+			 return false;
+		 
+		 Connection c = null;
+		 Statement stmt = null;
+
+		
+		 
+		 String getEventId = "SELECT max(event_id) from event;;";
+		 int eventId = -1;
+		 try {
+			 Class.forName("org.sqlite.JDBC");
+			 c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+			 c.setAutoCommit(false);
+			 stmt = c.createStatement();
+			 ResultSet resultSet = stmt.executeQuery(getEventId);
+			 resultSet.next();
+			 eventId = resultSet.getInt("max(event_id)");
+			 stmt.close();
+			 c.commit();
+			 c.close();
+		 } catch ( Exception e ) {
+			 return false;
+		 }
+		 
+		 
+		 String insertUserEvent = String.format("INSERT into user_events (user_id, event_id, status) VALUES (%d, %d, %d);", 
+				 userId, eventId, eEventStatus.attending.ordinal());
+		 
+		 
+		 
+		 return ExecuteNonQuery(insertUserEvent);
+		 
+	}
+	
 }
+

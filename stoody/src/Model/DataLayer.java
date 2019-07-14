@@ -87,9 +87,19 @@ public class DataLayer {
 	 * @return true if the event was successfully added, false otherwise.
 	 */
 	public static boolean AddEvent(StoodyEvent event) {
-		// add event by authorization
-		//TODO
-		return true;
+
+		// Authorization - make suer that only the teacher adds a new course.
+		RegularUser user = get_Instance().GetCurrentRegularUser();
+		if (user != null)
+		{			
+			// user is either a student or a teacher
+			if (user.get_userType() == eUserType.teacher ||
+				(user.get_userType() == eUserType.student && event.getEventType() == eEventType.user_meeting))
+			{
+				return SQLiteDataLayer.AddEvent(event, user.get_id());
+			}
+		}
+		return false;
 	}
 	
 	/**

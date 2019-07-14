@@ -1,6 +1,6 @@
 package Model;
 
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * An event object named (StoodyEvent) to differentiate between a language event.
