@@ -39,7 +39,7 @@ public class DataLayer {
 	/**
 	 * returns the user type by the credentials, if login fails returns unknown user.
 	 */
-	public static eUserType Login(String username, String password)
+	public  eUserType Login(String username, String password)
 	{
 		if (username.equals("Admin") && password.equals("HITadmin1234"))
 		{
@@ -63,7 +63,7 @@ public class DataLayer {
 	 * @param user regular user object
 	 * @return true if user was successfully added false otherwise.
 	 */
-	public static boolean AddNewRegularUser(RegularUser user) {
+	public  boolean AddNewRegularUser(RegularUser user) {
 		// Authorization test
 		if (get_Instance().get_currnetUser().get_userType() == eUserType.administrator)
 			return SQLiteDataLayer.AddUser(user);
@@ -97,7 +97,7 @@ public class DataLayer {
 	 * @param date
 	 * @return
 	 */
-	public static ArrayList<StoodyEvent> GetEventsListByDate(Date date)
+	public  ArrayList<StoodyEvent> GetEventsListByDate(Date date)
 	{
 		//TODO
 		return null;
@@ -109,7 +109,7 @@ public class DataLayer {
 	 * @param willAttend true if the user wishes to attend the event, false otherwise
 	 * @return true if the event was RSVP'd successfully.
 	 */
-	public static boolean SetEventStatus(StoodyEvent event, boolean willAttend)
+	public  boolean SetEventStatus(StoodyEvent event, boolean willAttend)
 	{
 		RegularUser user;
 		if (get_Instance().get_currnetUser().get_userType() == eUserType.student)

@@ -71,7 +71,7 @@ public class ViewAddUser {
 			{
 				if (!isteacherCheckBox.isSelected())
 				{
-				success = DataLayer.AddNewRegularUser(new Student(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
+				success = DataLayer.get_Instance().AddNewRegularUser(new Student(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
 				}
 		
 			} 

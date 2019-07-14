@@ -45,7 +45,7 @@ public class ViewLogin {
 		// login click event
 		ActionListener loginClick =	new ActionListener(){  
 			public void actionPerformed(ActionEvent e){
-				eUserType userType = DataLayer.Login(usernameTextField.getText(), passwordTextField.getText());
+				eUserType userType = DataLayer.get_Instance().Login(usernameTextField.getText(), passwordTextField.getText());
 				
 				
 				// show add users window if the user is an administrator
@@ -55,7 +55,7 @@ public class ViewLogin {
 					//frame.setVisible(false);
 					ViewAddUser.DisplayView();
 				}
-	        }  
+			}  
 		};
 		
 		// add event listener
