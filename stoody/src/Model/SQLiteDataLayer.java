@@ -162,9 +162,9 @@ public class SQLiteDataLayer {
 	
 	
 	
-	  public static List<RegularUser> SelectUsers(  ) {
+	  public static ArrayList<RegularUser> SelectUsers(  ) {
 
-		  List<RegularUser> users = new ArrayList<RegularUser>();
+		  ArrayList<RegularUser> users = new ArrayList<RegularUser>();
 		  
 		  
 		   Connection c = null;

@@ -136,9 +136,12 @@ public class DataLayer {
 	 * Note that the password field will be empty in this call.
 	 */
 	public static ArrayList<RegularUser> GetReuglarUsersList() {
-		//TODO
-		return null;
+		return SQLiteDataLayer.SelectUsers();
 	}
 
+
+	public static void GetEventParticipants() {
+		// TODO
+	}
 	
 }
