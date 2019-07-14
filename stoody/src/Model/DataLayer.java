@@ -109,8 +109,9 @@ public class DataLayer {
 	 */
 	public  ArrayList<StoodyEvent> GetEventsListByDate(Date date)
 	{
-		//TODO
-		return null;
+		RegularUser user = get_Instance().GetCurrentRegularUser();
+	
+		return SQLiteDataLayer.GetEventsListByDate(user.get_id(), date);
 	}
 	
 	/**

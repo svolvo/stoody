@@ -2,10 +2,12 @@ package Model;
 
 import java.sql.*;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 //import stoody.User;
 
@@ -46,6 +48,22 @@ public class SQLiteDataLayer {
 		return dateFormat.format(date);  
 	}
 	
+	public static String GetShortDateString(Date date)
+	{
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+		return dateFormat.format(date);  
+	}
+	
+	public static Date GetDateFromString(String dateStr)
+	{
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date startDate = new Date();
+		try {
+			   return format.parse(dateStr);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 	
 	private static boolean ExecuteNonQuery(String sql)
 	{
@@ -349,6 +367,61 @@ public class SQLiteDataLayer {
 		 return ExecuteNonQuery(insertUserEvent);
 		 
 	}
-	
+
+
+	public static ArrayList<StoodyEvent> GetEventsListByDate(int userId, Date date) {
+		// create query limits
+		Date dayAfter = new Date(date.getTime() + TimeUnit.DAYS.toMillis( 1 ));
+		
+		// TODO Auto-generated method stub
+		String sql = String.format(
+				"SELECT * FROM event  e\n" + 
+				"JOIN user_events ue USING(event_id) \n" + 
+				"WHERE e.start_date_time >= '%s' \n" + 
+				"AND e.end_date_time < '%s' \n" + 
+				"AND ue.user_id = %d \n" + 
+				"ORDER BY start_date_time ASC;",
+				GetShortDateString(date), GetShortDateString(dayAfter), userId); 
+		
+		 ArrayList<StoodyEvent> events = new ArrayList<StoodyEvent>();
+		  
+		  
+		   Connection c = null;
+		   Statement stmt = null;
+		   try {
+		      Class.forName("org.sqlite.JDBC");
+		      c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+		      c.setAutoCommit(false);
+
+		      stmt = c.createStatement();
+		      ResultSet rs = stmt.executeQuery(sql);
+		      
+		      while ( rs.next() ) {
+		    	  // id
+		    	  int eventId = rs.getInt("event_id");
+		    	  // type
+		    	  eEventType eventType = eEventType.values()[rs.getInt("event_type")];
+		    	  // title
+		    	  String title = rs.getString("title");
+		    	  // start date time
+		    	  Date startDateTime = GetDateFromString(rs.getString("start_date_time"));
+		    	  // end date time
+		    	  Date endDateTime = GetDateFromString(rs.getString("end_date_time"));
+		    	  // location
+		    	  String location = rs.getString("location");
+		    
+		    	  // add event to collection
+		    	  events.add(new StoodyEvent(eventId, eventType, title, startDateTime, endDateTime, location));
+		    
+		   
+		      }
+		      rs.close();
+		      stmt.close();
+		      c.close();
+		   } catch ( Exception e ) {
+		   }
+		   
+		   return events;
+	}	
 }
 
