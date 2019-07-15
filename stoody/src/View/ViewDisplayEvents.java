@@ -28,11 +28,10 @@ public class ViewDisplayEvents
     //lists 
     public static int counter = 0;
 	
-public static JFrame DisplayView() {
+    public static JFrame DisplayView() {
 		
 		
 		JFrame frame1 = new JFrame("choose date");
-		JFrame frame2 = new JFrame("Event List");
 		
 		UtilDateModel model = new UtilDateModel();
 		
@@ -42,7 +41,6 @@ public static JFrame DisplayView() {
 		p.put("text.month", "Month");
 		p.put("text.year", "Year");
 		
-		String [] data = {"1", "2", "3", "4", "5", "6", "7"};
 		
 		
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
@@ -53,7 +51,7 @@ public static JFrame DisplayView() {
 		
 		// add button
 		JButton searchButton = new JButton("Search");
-		searchButton.setBounds(50,250,95,30);
+		searchButton.setBounds(50,400,95,30);
 		frame1.add(searchButton);
 
 		// set bounds
@@ -67,7 +65,7 @@ public static JFrame DisplayView() {
 	    
 	    frame1.add(datePicker);
 	    
-	    frame1.setSize(400,400);  
+	    frame1.setSize(600,600);  
 	    frame1.setLayout(null);  
 	    frame1.setVisible(true);
 	    
@@ -86,7 +84,6 @@ public static JFrame DisplayView() {
 	                        				"Location"};
 			    	int eventAmount = 0;//need to find how much event we have on date that the user pick
 			    	
-			    	
 			    	ArrayList<StoodyEvent> eventList = DataLayer.get_Instance().GetEventsListByDate(selectedDate);
 			    	eventAmount = eventList.size();
 		
@@ -101,6 +98,7 @@ public static JFrame DisplayView() {
 			    		data[i][3] = eventList.get(i).getEndDateTime();
 			    		data[i][4] = eventList.get(i).getLocation();
 			    	}
+			    	
 			    	
 			    	
 			    	 TableModel model = new DefaultTableModel(data, columnNames)
@@ -121,13 +119,10 @@ public static JFrame DisplayView() {
 						table.setRowHeight(i, 40);
 					}
 					
-					frame2.add(new JScrollPane(table));
-			         
-			        frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			        frame2.setTitle("JList Example");
-			        frame2.setSize(400,400);
-			        frame2.setLocationRelativeTo(null);
-			        frame2.setVisible(true);
+					JScrollPane pane = new JScrollPane(table);
+					pane.setBounds(50,100,400,200);
+					
+					frame1.add(pane);
 			        
 			    }
 				
