@@ -423,5 +423,53 @@ public class SQLiteDataLayer {
 		   
 		   return events;
 	}	
+	
+	
+	public static ArrayList<EventParticipant> GetEventParticipants(int eventId) {
+
+		String sql = String.format(
+				"SELECT u.id, u.first_name, u.last_name, ue.status FROM \n" + 
+				"user u \n" + 
+				"JOIN user_events ue ON (u.id = ue.user_id)\n" + 
+				"WHERE ue.event_id = %d;", eventId);
+		
+		 ArrayList<EventParticipant> participiants = new ArrayList<EventParticipant>();
+		  
+		  
+		   Connection c = null;
+		   Statement stmt = null;
+		   try {
+		      Class.forName("org.sqlite.JDBC");
+		      c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+		      c.setAutoCommit(false);
+
+		      stmt = c.createStatement();
+		      ResultSet rs = stmt.executeQuery(sql);
+		      
+		      while ( rs.next() ) {
+		    	  // user id
+		    	  int userId = rs.getInt("id");
+		    	  // Event Status
+		    	  eEventStatus eventStatus = eEventStatus.values()[rs.getInt("status")];
+		    	  // firstName
+		    	  String firstName = rs.getString("first_name");
+		    	  // title
+		    	  String lastName = rs.getString("last_name");
+		    
+		    	  // add event to collection
+		    	  participiants.add(new EventParticipant(userId,firstName, lastName, eventStatus));
+		    
+		   
+		      }
+		      rs.close();
+		      stmt.close();
+		      c.close();
+		   } catch ( Exception e ) {
+		   }
+		   
+		   return participiants;
+	}	
+	
+	
 }
 

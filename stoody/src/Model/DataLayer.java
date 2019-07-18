@@ -2,6 +2,7 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class DataLayer {
 
@@ -82,6 +83,17 @@ public class DataLayer {
 	}
 	
 	/**
+	 * A teacher can add a new course to the system.
+	 * @param course
+	 * @return
+	 */
+	public boolean AddCourse(Course course)
+	{
+		// TODO
+		return false;
+	}
+	
+	/**
 	 * Adds a new event to the system, the owner of the event is the current logged in user.
 	 * @param event
 	 * @return true if the event was successfully added, false otherwise.
@@ -101,6 +113,19 @@ public class DataLayer {
 		}
 		return false;
 	}
+	
+	/**
+	 * Adds a new event of type meeting and attaches the event to all of the users
+	 * @param event StoodyEvent of type meeting
+	 * @param userIds list of RegularUser id's
+	 * @return true if the event was successfully added, false otherwise
+	 */
+	public boolean AddMeeting(StoodyEvent event, List<Integer> userIds)
+	{
+		// TODO
+		return false;
+	}
+	
 	
 	/**
 	 * Get's a chronologically sorted list of Stoody events which the currently logged in user contains on a given day.
@@ -135,13 +160,48 @@ public class DataLayer {
 	 * Get the list of all the Regular Users of the System.
 	 * Note that the password field will be empty in this call.
 	 */
-	public static ArrayList<RegularUser> GetReuglarUsersList() {
+	public ArrayList<RegularUser> GetReuglarUsersList() {
 		return SQLiteDataLayer.SelectUsers();
 	}
 
 
-	public static void GetEventParticipants() {
-		// TODO
+	/**
+	 * Returns a list of all the invites of a meetings and their RSVP state
+	 * @param event
+	 * @return
+	 */
+	public ArrayList<EventParticipant> GetEventParticipants(StoodyEvent event) {
+		
+		return SQLiteDataLayer.GetEventParticipants(event.getId());
+
 	}
 	
+	/**
+	 * Returns a list of all the courses in the system and the logged in user status of subscription
+	 */
+	public ArrayList<CourseDetails> getCourseList()
+	{
+		// TODO
+		return null;
+	}
+	
+	/**
+	 * Adds the logged in user to the course.
+	 */
+	public boolean SignUpToCourse(CourseDetails courseDetails)
+	{
+		// TODO
+		return false;
+	}
+
+	/**
+	 * Attempts to change the password for the currently logged in user (only regular user) 
+	 * @param password
+	 * @return true if password was changed successfully, false otherwise.
+	 */
+	public boolean ChagngePassword(String _password) {
+		// Changes a password to a regular user
+		
+		return false;
+	}
 }

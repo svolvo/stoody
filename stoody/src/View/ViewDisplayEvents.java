@@ -20,8 +20,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import Model.DataLayer;
-import Model.StoodyEvent;
+import Model.*;
 
 public class ViewDisplayEvents 
 {  
@@ -32,6 +31,7 @@ public class ViewDisplayEvents
 		
 		
 		JFrame frame1 = new JFrame("choose date");
+		JFrame framePopup = new JFrame("Full Information");
 		
 		UtilDateModel model = new UtilDateModel();
 		
@@ -41,6 +41,30 @@ public class ViewDisplayEvents
 		p.put("text.month", "Month");
 		p.put("text.year", "Year");
 		
+		// frame Pop up //
+		
+		JLabel titleLabel = new JLabel("Title:");
+		JLabel locationLabel = new JLabel("Location:");
+		JLabel dateLabel = new JLabel("Date:");
+		JLabel timeLabel = new JLabel("Time:");
+		
+		JLabel titleText = new JLabel("Title");
+		JLabel locationText = new JLabel("Location");
+		JLabel dateText = new JLabel("Date");
+		JLabel timeText = new JLabel("Time");
+		
+		titleLabel.setBounds(20,20,200,20);
+		locationLabel.setBounds(20,40,200,20);
+		dateLabel.setBounds(20,60,200,20);
+		timeLabel.setBounds(20,80,200,20);
+		
+		titleText.setBounds(120,20,200,20);
+		locationText.setBounds(120,40,200,20);
+		dateText.setBounds(120,60,200,20);
+		timeText.setBounds(120,80,200,20);
+		
+		
+		// frame Pop up //
 		
 		
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
@@ -65,7 +89,7 @@ public class ViewDisplayEvents
 	    
 	    frame1.add(datePicker);
 	    
-	    frame1.setSize(600,600);  
+	    frame1.setSize(1100,600);  
 	    frame1.setLayout(null);  
 	    frame1.setVisible(true);
 	    
@@ -83,10 +107,9 @@ public class ViewDisplayEvents
 	                        				"End Date",
 	                        				"Location"};
 			    	int eventAmount = 0;//need to find how much event we have on date that the user pick
-			    	
 			    	ArrayList<StoodyEvent> eventList = DataLayer.get_Instance().GetEventsListByDate(selectedDate);
 			    	eventAmount = eventList.size();
-		
+			    	
 			    	//this code we use for putting the event to the list and after that we show the list
 			    	Object[][]data = new Object[eventAmount][5];
 			    	
@@ -94,11 +117,10 @@ public class ViewDisplayEvents
 			    	{
 			    		data[i][0] = eventList.get(i).getEventType();
 			    		data[i][1] = eventList.get(i).getTitle();
-			    		data[i][2] = eventList.get(i).getStartDateTime();
-			    		data[i][3] = eventList.get(i).getEndDateTime();
+			    		data[i][2] = DateTimeStringConverter.DateToStringGetDisplayTime(eventList.get(i).getStartDateTime());
+			    		data[i][3] = DateTimeStringConverter.DateToStringGetDisplayTime(eventList.get(i).getEndDateTime());
 			    		data[i][4] = eventList.get(i).getLocation();
 			    	}
-			    	
 			    	
 			    	
 			    	 TableModel model = new DefaultTableModel(data, columnNames)
@@ -110,9 +132,8 @@ public class ViewDisplayEvents
 			    	  };
 			    	  JTable table = new JTable(model);
 			    	
-					//JTable table = new JTable(data, columnNames);
 					table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-					table.setFont(new Font("Verdana", Font.PLAIN, 24));
+					table.setFont(new Font("Verdana", Font.PLAIN, 14));
 					
 					for(int i = 0; i < data.length;i++) 
 					{
@@ -120,9 +141,80 @@ public class ViewDisplayEvents
 					}
 					
 					JScrollPane pane = new JScrollPane(table);
-					pane.setBounds(50,100,400,200);
+					pane.setBounds(50,100,1000,200);
 					
 					frame1.add(pane);
+					
+					table.addMouseListener(new java.awt.event.MouseAdapter() {
+					    @Override
+					    public void mouseClicked(java.awt.event.MouseEvent evt) {
+					        int row = table.rowAtPoint(evt.getPoint());
+					        int col = table.columnAtPoint(evt.getPoint());
+					        if (row >= 0 && col >= 0)
+					        {
+					        	String[] columnNamesPopup = {"Name",
+                        				"Last Name",
+                        				"Satus"};
+						    	int userAmount = 0;//need to find how much event we have on date that the user pick
+						    	ArrayList<EventParticipant> participantsList = DataLayer.get_Instance().GetEventParticipants(eventList.get(row));
+						    	userAmount = participantsList.size();
+					
+						    	//this code we use for putting the event to the list and after that we show the list
+						    	Object[][]dataPopup = new Object[userAmount][5];
+						    	
+						    	for(int i = 0; i < dataPopup.length;i++) 
+						    	{
+						    		dataPopup[i][0] = participantsList.get(i).get_firstName();
+						    		dataPopup[i][1] = participantsList.get(i).get_lastName();
+						    		dataPopup[i][2] = participantsList.get(i).get_eventStatus();
+						    	}
+						    	
+						    	 TableModel modelPopup = new DefaultTableModel(dataPopup, columnNamesPopup)
+						    	  {
+						    	    public boolean isCellEditable(int row, int column)
+						    	    {
+						    	      return false;//This causes all cells to be not editable
+						    	    }
+						    	  };
+						    	  JTable tablePopup = new JTable(modelPopup);
+						    	
+								//JTable table = new JTable(data, columnNames);
+						    	 tablePopup.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+						    	 tablePopup.setFont(new Font("Verdana", Font.PLAIN, 14));
+								
+								for(int i = 0; i < dataPopup.length;i++) 
+								{
+									tablePopup.setRowHeight(i, 40);
+								}
+								
+								JScrollPane pane1 = new JScrollPane(tablePopup);
+								pane1.setBounds(50,200,600,200);
+								
+								framePopup.add(pane1);
+								framePopup.add(titleLabel);
+								framePopup.add(locationLabel);
+								framePopup.add(dateLabel);
+								framePopup.add(timeLabel);
+								
+								titleText.setText((String) data[row][1]);
+								locationText.setText((String) data[row] [4]);
+								dateText.setText((String) data[row][2]);
+								timeText.setText((String) data[row][2]);
+								
+								framePopup.add(titleText);
+								framePopup.add(locationText);
+								framePopup.add(dateText);
+								framePopup.add(timeText);
+								
+								
+								framePopup.setSize(800,800);  
+								framePopup.setLayout(null);  
+								framePopup.setVisible(true);
+					        	
+					        	
+					        }
+					    }
+					});
 			        
 			    }
 				
