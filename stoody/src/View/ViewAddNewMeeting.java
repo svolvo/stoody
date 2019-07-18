@@ -77,7 +77,7 @@ public class ViewAddNewMeeting
 		// time picker //
 		
 		JSpinner timeSpinner = new JSpinner( new SpinnerDateModel() );
-		JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm:ss");
+		JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm");
 		timeSpinner.setEditor(timeEditor);
 		
 		// time picker //

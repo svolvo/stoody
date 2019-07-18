@@ -4,8 +4,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import Model.DataLayer;
-import Model.Student;
+import Model.*;
 
 
 public class ViewAddUser {
@@ -72,6 +71,9 @@ public class ViewAddUser {
 				if (!isteacherCheckBox.isSelected())
 				{
 				success = DataLayer.get_Instance().AddNewRegularUser(new Student(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
+				}
+				else {
+					success = DataLayer.get_Instance().AddNewRegularUser(new Teacher(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
 				}
 		
 			} 

@@ -31,7 +31,7 @@ public class SQLiteTesting {
 	   public void AddEvent() {	  
 		   // act
 		   
-		   String startDateStr = "2019-01-01 19:00";
+		   String startDateStr = "2019-07-01 17:00";
 		   DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		   Date startDate = new Date();
 		   try {
@@ -41,7 +41,7 @@ public class SQLiteTesting {
 			   e.printStackTrace();
 		   }
 		   
-		   StoodyEvent event = new StoodyEvent(eEventType.course, "Math2w2", startDate, startDate, "21");
+		   StoodyEvent event = new StoodyEvent(eEventType.course, "English", startDate, startDate, "21");
 		   
 		   
 		   boolean tablesExist = SQLiteDataLayer.AddEvent(event, 122);
@@ -55,7 +55,7 @@ public class SQLiteTesting {
 	   public void GetEventByDate() {	  
 		   // act
 		   
-		   String startDateStr = "2019-01-01 19:00";
+		   String startDateStr = "2019-07-01 19:00";
 		   DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		   Date startDate = new Date();
 		   try {

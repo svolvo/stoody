@@ -171,9 +171,7 @@ public class DataLayer {
 	 * @return
 	 */
 	public ArrayList<EventParticipant> GetEventParticipants(StoodyEvent event) {
-		
 		return SQLiteDataLayer.GetEventParticipants(event.getId());
-
 	}
 	
 	/**
@@ -201,7 +199,7 @@ public class DataLayer {
 	 */
 	public boolean ChagngePassword(String _password) {
 		// Changes a password to a regular user
-		
-		return false;
+		// TODO
+		return true;
 	}
 }

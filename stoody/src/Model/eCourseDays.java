@@ -5,5 +5,6 @@ public enum eCourseDays {
 	Monday,
 	TuesDay,
 	Wedensday,
-	Thursday
+	Thursday,
+	Friday
 }

@@ -24,7 +24,16 @@ public class Stoody {
 	 * Displays the login view 
 	 */
 	public static void Login() {
+		
 		ViewLogin.DisplayView();
+		
+		//DataLayer.get_Instance().Login("122", "122");
+		
+		//ViewAddNewCourse.DisplayView();
+		//ViewChangePassword.DisplayView();
+		//ViewAddNewMeeting.DisplayView();
+
+		//ViewDisplayEvents.DisplayView();
 	}
 	
 
