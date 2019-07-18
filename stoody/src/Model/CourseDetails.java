@@ -7,24 +7,18 @@ public class CourseDetails {
 	
 	
 	private int _courseId;
-	private String _courseName;
-	private eCourseDays _dayOfTheWeek;
-	private Date _moedA;
-	private Date _moedB;
+	private Course _course;
 	private eUserCourseStatus _status;
 	
-	
-	public CourseDetails(int _courseId, String _courseName, eCourseDays _dayOfTheWeek, Date _moedA, Date _moedB,
-			eUserCourseStatus _status) {
+
+	public CourseDetails(int _courseId, Course _course, eUserCourseStatus _status) {
+		super();
 		this._courseId = _courseId;
-		this._courseName = _courseName;
-		this._dayOfTheWeek = _dayOfTheWeek;
-		this._moedA = _moedA;
-		this._moedB = _moedB;
+		this._course = _course;
 		this._status = _status;
 	}
-
-
+	
+	
 	public int get_courseId() {
 		return _courseId;
 	}
@@ -35,43 +29,13 @@ public class CourseDetails {
 	}
 
 
-	public String get_courseName() {
-		return _courseName;
+	public Course get_course() {
+		return _course;
 	}
 
 
-	public void set_courseName(String _courseName) {
-		this._courseName = _courseName;
-	}
-
-
-	public eCourseDays get_dayOfTheWeek() {
-		return _dayOfTheWeek;
-	}
-
-
-	public void set_dayOfTheWeek(eCourseDays _dayOfTheWeek) {
-		this._dayOfTheWeek = _dayOfTheWeek;
-	}
-
-
-	public Date get_moedA() {
-		return _moedA;
-	}
-
-
-	public void set_moedA(Date _moedA) {
-		this._moedA = _moedA;
-	}
-
-
-	public Date get_moedB() {
-		return _moedB;
-	}
-
-
-	public void set_moedB(Date _moedB) {
-		this._moedB = _moedB;
+	public void set_course(Course _course) {
+		this._course = _course;
 	}
 
 
@@ -83,6 +47,5 @@ public class CourseDetails {
 	public void set_status(eUserCourseStatus _status) {
 		this._status = _status;
 	}
-	
 	
 }

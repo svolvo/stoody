@@ -5,10 +5,10 @@ import java.util.Date;
 public class Course {
 
 	public String _courseName;
-	public Date _start;
-	public Date _end;
+	public Date _startTimeEveryWeek;
+	public Date _endTimeEveryWeek;
 	public String _location;
-	public String _dayOfTheWeek;
+	public eCourseDays _courseDay;
 	
 	
 	public Date moedA_Start;

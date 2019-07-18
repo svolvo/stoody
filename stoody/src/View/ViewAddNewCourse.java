@@ -15,6 +15,7 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import Model.DataLayer;
 import Model.Student;
+import Model.eCourseDays;
 import Model.Course;
 
 public class ViewAddNewCourse {
@@ -200,18 +201,24 @@ public class ViewAddNewCourse {
 					Date _start, _end, _startA, _startB, _endA, _endB;
 					
 					C._courseName = nameTextField.getText().toString();
-					C._start= (Date)datePickerStart.getModel().getValue();
+					C._startTimeEveryWeek= (Date)datePickerStart.getModel().getValue();
 					_start = (Date)timeSpinnerStart.getModel().getValue();
-					C._start.setHours(_start.getHours());
-					C._start.setMinutes(_start.getMinutes());
-					C._start.setSeconds(_start.getSeconds());
-					C._end= (Date)datePickerEnd.getModel().getValue();
+					C._startTimeEveryWeek.setHours(_start.getHours());
+					C._startTimeEveryWeek.setMinutes(_start.getMinutes());
+					C._startTimeEveryWeek.setSeconds(_start.getSeconds());
+					C._endTimeEveryWeek= (Date)datePickerEnd.getModel().getValue();
 					_end = (Date)timeSpinnerEnd.getModel().getValue();
-					C._end.setHours(_end.getHours());
-					C._end.setMinutes(_end.getMinutes());
-					C._end.setSeconds(_end.getSeconds());
+					C._endTimeEveryWeek.setHours(_end.getHours());
+					C._endTimeEveryWeek.setMinutes(_end.getMinutes());
+					C._endTimeEveryWeek.setSeconds(_end.getSeconds());
 					C._location= locationTextField.getText().toString();
-					C._dayOfTheWeek= dayTextField.getText().toString();
+					
+					// TODO
+					// Day of week from dropdown
+					C._courseDay = eCourseDays.Sunday;
+					
+					
+					
 					C.moedA_Start=(Date)datePickerMoedA.getModel().getValue();
 					_startA = (Date)timeSpinnerStartA.getModel().getValue();
 					C.moedA_Start.setHours(_startA.getHours());
