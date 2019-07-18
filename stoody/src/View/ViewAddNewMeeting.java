@@ -3,6 +3,9 @@ package View;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +34,7 @@ import Model.RegularUser;
 import Model.StoodyEvent;
 import Model.eEventType;
 
-public class ViewAddNewMeeting 
+public class ViewAddNewMeeting
 {
 	private static Object[][]data;
 	private static ArrayList<RegularUser> eventList;
@@ -46,8 +49,10 @@ public class ViewAddNewMeeting
 		final JLabel titleLabel = new JLabel("Title");
 		final JLabel locationLabel = new JLabel("Location");
 		final JLabel windowLabel = new JLabel("Meeting Event Add");
-		final JLabel dateLabel = new JLabel("Date");
-		final JLabel timeLabel = new JLabel("Time");
+		final JLabel dateStartLabel = new JLabel("Date Start");
+		final JLabel timeStartLabel = new JLabel("Time Start");
+		final JLabel dateFinishLabel = new JLabel("Date Finish");
+		final JLabel timeFinishLabel = new JLabel("Time finish");
 
 		// add text fields
 		final JTextField titleTextField =new JTextField();
@@ -59,26 +64,43 @@ public class ViewAddNewMeeting
 		
 		// date picker //
 		
-		UtilDateModel model = new UtilDateModel();
+		UtilDateModel modelStart = new UtilDateModel();
+		UtilDateModel modelFinish = new UtilDateModel();
+		
 		
 		//properties of the date picker
-		Properties p = new Properties();
-		p.put("text.today", "Today");
-		p.put("text.month", "Month");
-		p.put("text.year", "Year");
+		Properties pStart = new Properties();
+		pStart.put("text.today", "Today");
+		pStart.put("text.month", "Month");
+		pStart.put("text.year", "Year");
+		
+		//properties of the date picker
+		Properties pFinish = new Properties();
+		pFinish.put("text.today", "Today");
+		pFinish.put("text.month", "Month");
+		pFinish.put("text.year", "Year");
 		
 		
 		
-		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateComponentFormatter());
+		JDatePanelImpl datePanelStart = new JDatePanelImpl(modelStart, pStart);
+		JDatePanelImpl datePanelFinish = new JDatePanelImpl(modelFinish, pFinish);
+		
+		JDatePickerImpl datePickerStart = new JDatePickerImpl(datePanelStart, new DateComponentFormatter());
+		JDatePickerImpl datePickerFinish = new JDatePickerImpl(datePanelFinish, new DateComponentFormatter());
 		
 		//date picker //
 		
 		// time picker //
 		
-		JSpinner timeSpinner = new JSpinner( new SpinnerDateModel() );
-		JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm");
-		timeSpinner.setEditor(timeEditor);
+		JSpinner timeSpinnerStart = new JSpinner( new SpinnerDateModel() );
+		JSpinner timeSpinnerFinish = new JSpinner(new SpinnerDateModel());
+		
+		JSpinner.DateEditor timeEditorStart = new JSpinner.DateEditor(timeSpinnerStart, "HH:mm");
+		JSpinner.DateEditor timeEdotrFinish = new JSpinner.DateEditor(timeSpinnerFinish,"HH:mm" );
+		
+		timeSpinnerStart.setEditor(timeEditorStart);
+		timeSpinnerFinish.setEditor(timeEdotrFinish);
+		
 		
 		// time picker //
 		
@@ -147,7 +169,7 @@ public class ViewAddNewMeeting
 		
 		
 		JScrollPane pane = new JScrollPane(table);
-		pane.setBounds(50,250,570,250);
+		pane.setBounds(50,300,570,250);
 		
 		frameEventCreate.add(pane);
 		
@@ -165,7 +187,8 @@ public class ViewAddNewMeeting
 				
 				if(!titleTextField.getText().toString().equals("") &&
 					!locationTextField.getText().toString().equals("")&&
-					datePicker.getModel().getValue() != null) {
+					datePickerStart.getModel().getValue() != null &&
+					datePickerFinish.getModel().getValue() != null) {
 				// save //
 				List<Integer> userId = new ArrayList<Integer>();
 				
@@ -186,15 +209,30 @@ public class ViewAddNewMeeting
 				
 				String title = titleTextField.getText().toString();
 				String location = locationTextField.getText().toString();
-				Date date = (Date) datePicker.getModel().getValue();
-				Date time = (Date) timeSpinner.getModel().getValue();
-				date.setHours(time.getHours());
-				date.setMinutes(time.getMinutes());
-				date.setSeconds(time.getSeconds());
 				
-				StoodyEvent event = new StoodyEvent(eEventType.user_meeting,title,date,date,location);
+				// Date start + time //
 				
-				System.out.println(date);
+				Date dateStart = (Date) datePickerStart.getModel().getValue();
+				Date timeStart = (Date) timeSpinnerStart.getModel().getValue();
+				dateStart.setHours(timeStart.getHours());
+				dateStart.setMinutes(timeStart.getMinutes());
+				dateStart.setSeconds(timeStart.getSeconds());
+				
+				// Date start + time //
+				
+				// Date finish + time //
+				
+				Date dateFinish = (Date) datePickerStart.getModel().getValue();
+				Date timeFinish = (Date) timeSpinnerStart.getModel().getValue();
+				dateFinish.setHours(timeFinish.getHours());
+				dateFinish.setMinutes(timeFinish.getMinutes());
+				dateFinish.setSeconds(timeFinish.getSeconds());
+				
+				// Date finish + time //
+				
+				StoodyEvent event = new StoodyEvent(eEventType.user_meeting,title,dateStart,dateFinish,location);
+				
+				System.out.println(dateStart);
 				System.out.println();
 				DataLayer.get_Instance().AddMeeting(event,userId);//need to add func AddMeeting
 				
@@ -202,7 +240,7 @@ public class ViewAddNewMeeting
 				
 				titleTextField.setText("");
 				locationTextField.setText("");
-				datePicker.getModel().setDate(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH));
+				datePickerStart.getModel().setDate(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH));
 				for(int i = 0; i < data.length; i++) 
 				{
 					data[i][3] = false;
@@ -223,10 +261,14 @@ public class ViewAddNewMeeting
 		titleTextField.setBounds(50,70,200,20);
 		locationLabel.setBounds(50,90,50,20);
 		locationTextField.setBounds(50,110,200,20);
-		dateLabel.setBounds(50,130,200,40);
-		datePicker.setBounds(50,160, 200,40);
-		timeSpinner.setBounds(300, 160, 200,30);
-		timeLabel.setBounds(300,140,200,20);
+		dateStartLabel.setBounds(50,130,200,40);
+		datePickerStart.setBounds(50,160, 200,30);
+		dateFinishLabel.setBounds(50, 190 ,200 ,20);
+		datePickerFinish.setBounds(50, 210, 200, 40);
+		timeStartLabel.setBounds(300,140,200,20);
+		timeSpinnerStart.setBounds(300, 160, 200,30);
+		timeFinishLabel.setBounds(300, 190 , 200 ,20);
+		timeSpinnerFinish.setBounds(300, 210, 200,30);
 		saveAllButton.setBounds(50,600,200,20);
 		
 		
@@ -235,10 +277,14 @@ public class ViewAddNewMeeting
 		frameEventCreate.add(locationLabel);
 		frameEventCreate.add(titleTextField);
 		frameEventCreate.add(locationTextField);
-		frameEventCreate.add(dateLabel);
-		frameEventCreate.add(datePicker);
-		frameEventCreate.add(timeSpinner);
-		frameEventCreate.add(timeLabel);
+		frameEventCreate.add(dateStartLabel);
+		frameEventCreate.add(datePickerStart);
+		frameEventCreate.add(dateFinishLabel);
+		frameEventCreate.add(datePickerFinish);
+		frameEventCreate.add(timeSpinnerStart);
+		frameEventCreate.add(timeStartLabel);
+		frameEventCreate.add(timeFinishLabel);
+		frameEventCreate.add(timeSpinnerFinish);
 		frameEventCreate.add(saveAllButton);
 		
 		
