@@ -5,6 +5,8 @@ import java.util.Date;
 public class Course {
 
 	public String _courseName;
+	public Date _courseStartDate;
+	public Date _courseEndDate;
 	public Date _startTimeEveryWeek;
 	public Date _endTimeEveryWeek;
 	public String _location;
