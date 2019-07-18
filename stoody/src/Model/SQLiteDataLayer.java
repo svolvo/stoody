@@ -380,6 +380,7 @@ public class SQLiteDataLayer {
 				"WHERE e.start_date_time >= '%s' \n" + 
 				"AND e.end_date_time < '%s' \n" + 
 				"AND ue.user_id = %d \n" + 
+				"AND ue.status != 2 \n" + // don't retrieve cancelled events
 				"ORDER BY start_date_time ASC;",
 				GetShortDateString(date), GetShortDateString(dayAfter), userId); 
 		
