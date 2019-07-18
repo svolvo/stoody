@@ -45,13 +45,13 @@ public class ViewDisplayEvents
 		
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel locationLabel = new JLabel("Location:");
-		JLabel dateLabel = new JLabel("Date:");
-		JLabel timeLabel = new JLabel("Time:");
+		JLabel dateLabel = new JLabel("Start Time:");
+		JLabel timeLabel = new JLabel("Finish Time:");
 		
 		JLabel titleText = new JLabel("Title");
 		JLabel locationText = new JLabel("Location");
-		JLabel dateText = new JLabel("Date");
-		JLabel timeText = new JLabel("Time");
+		JLabel dateText = new JLabel("Start Time");
+		JLabel timeText = new JLabel("Finish Time");
 		
 		titleLabel.setBounds(20,20,200,20);
 		locationLabel.setBounds(20,40,200,20);
@@ -77,6 +77,12 @@ public class ViewDisplayEvents
 		JButton searchButton = new JButton("Search");
 		searchButton.setBounds(50,400,95,30);
 		frame1.add(searchButton);
+		
+		JButton deleteButton = new JButton("Delet");
+		JButton acceptButton = new JButton("Accept");
+		
+		deleteButton.setBounds(50,700,200,40);
+		acceptButton.setBounds(300,700,200,40);
 
 		// set bounds
 		idLabel		.setBounds(50,30, 200,20);  
@@ -195,6 +201,8 @@ public class ViewDisplayEvents
 								framePopup.add(locationLabel);
 								framePopup.add(dateLabel);
 								framePopup.add(timeLabel);
+								framePopup.add(deleteButton);
+								framePopup.add(acceptButton);
 								
 								titleText.setText((String) data[row][1]);
 								locationText.setText((String) data[row] [4]);
@@ -206,10 +214,26 @@ public class ViewDisplayEvents
 								framePopup.add(dateText);
 								framePopup.add(timeText);
 								
-								
 								framePopup.setSize(800,800);  
 								framePopup.setLayout(null);  
 								framePopup.setVisible(true);
+								
+								
+								deleteButton.addActionListener(new ActionListener(){  
+									public void actionPerformed(ActionEvent e){
+										// search for events
+										DataLayer.get_Instance().SetEventStatus(eventList.get(row), false);
+										
+										}
+									});
+								
+								acceptButton.addActionListener(new ActionListener(){  
+									public void actionPerformed(ActionEvent e){
+										// search for events
+										DataLayer.get_Instance().SetEventStatus(eventList.get(row), true);
+										
+										}
+									});
 					        	
 					        	
 					        }
