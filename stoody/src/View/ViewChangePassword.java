@@ -27,7 +27,7 @@ public class ViewChangePassword {
 		JButton newPasswordButton = new JButton("Save");  
 
 		// set bounds
-		newPasswordLabel		.setBounds(50,30, 300,20);  
+		newPasswordLabel		.setBounds(50,30, 400,20);  
 		newPasswordTextField	.setBounds(50,60, 200,20);  
 		
 		
@@ -40,7 +40,7 @@ public class ViewChangePassword {
 	   frame.add(newPasswordButton);
 
 	    
-	    frame.setSize(400,220);  
+	    frame.setSize(500,220);  
 	    frame.setLayout(null);  
 	    frame.setVisible(true);  
 	    
@@ -48,12 +48,10 @@ public class ViewChangePassword {
 	 // add event listener
 	 	newPasswordButton.addActionListener(new ActionListener(){  
 	 	public void actionPerformed(ActionEvent e){
-	 // Add user click event
-	 		
 	 		
 	 		String _password;
 	 		_password = newPasswordTextField.getText().toString();
-	 		boolean success = DataLayer.get_Instance().ChagngePassword(_password);	 		
+	 		boolean success = DataLayer.get_Instance().ChagngePassword(_password); //Checks if a password is valid	
 	 		
 	 		if (!(success))
 	 		{
