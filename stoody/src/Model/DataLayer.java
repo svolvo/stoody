@@ -190,8 +190,10 @@ public class DataLayer {
 	 */
 	public boolean SignUpToCourse(CourseDetails courseDetails)
 	{
-		// TODO
-		return false;
+		int userId = getInstance().GetCurrentRegularUser().get_id();
+		
+		return SQLiteDataLayer.SignUpToCourse(courseDetails.get_courseId(), userId);
+		
 	}
 
 	/**

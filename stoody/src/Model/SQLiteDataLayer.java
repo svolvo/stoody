@@ -633,34 +633,15 @@ VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',
 		// get all the course id which the users is already subscribed to.
 		String sqlGetUserCourseIds = "SELECT course_id FROM student_courses;";
 
-		ArrayList<Integer> userCourses = new ArrayList<Integer>();
+		ArrayList<Integer> userCourses = GetFieldIntList(sqlGetUserCourseIds, "course_id");
+		
+		
+		// Get all course list
+		String sqlGetCourseList = "SELECT * FROM course;";
+
 		Connection c = null;
 		Statement stmt = null;
 		
-		try {
-			Class.forName("org.sqlite.JDBC");
-		    c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
-		    c.setAutoCommit(false);
-
-		    stmt = c.createStatement();
-		    ResultSet rs = stmt.executeQuery(sqlGetUserCourseIds);
-		      
-		    while ( rs.next() ) {
-		    	// add course id
-		    	userCourses.add(rs.getInt("course_id"));
-		    }
-		    rs.close();
-		    stmt.close();
-		    c.close();
-		} catch ( Exception e ) {		
-		}
-		
-
-		// Get all course list
-		String sqlGetCourseList = "SELECT * FROM course;";
-		
-		c = null;
-		stmt = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
 		    c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
@@ -712,9 +693,58 @@ VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',
 		
 		
 		return courses;
+	}
+
+	public static boolean SignUpToCourse(int courseId, int userId) {
+
+		// get all the event id's of the course
+		String sql = "SELECT event_id FROM course_events;";
+		ArrayList<Integer> eventIds = GetFieldIntList(sql, "event_id");
+		
+		// add the events of the course to the user events table with an attending status.
+		for (Integer eventId : eventIds)
+		{
+			String sqlAddUserEvent = String.format(
+					"INSERT INTO user_events (user_id, event_id, status) \n" + 
+					"VALUES (%d, %d, %d);", 
+					userId, eventId, eEventStatus.attending.ordinal());
+			if (!ExecuteNonQuery(sqlAddUserEvent))
+				return false;
+		}
+
+		return true;
 	}	
 	
 
+	/**
+	 * returns a list of integers corresponding to an INTEGER type field from a sql query result. 
+	 */
+	private static ArrayList<Integer> GetFieldIntList(String sql, String fieldName)
+	{
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		
+		Connection c = null;
+		Statement stmt = null;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+		    c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+		    c.setAutoCommit(false);
+
+		    stmt = c.createStatement();
+		    ResultSet rs = stmt.executeQuery(sql);
+		      
+		    while ( rs.next() ) {
+		    	// add course id
+		    	list.add(rs.getInt(fieldName));
+		    }
+		    rs.close();
+		    stmt.close();
+		    c.close();
+		} catch ( Exception e ) {		
+		}
+		return list;
+	}
 	
 }
 
