@@ -153,6 +153,37 @@ public class SQLiteDataLayer {
 	}
 	
 	/**
+	 * returns a list of integers corresponding to an INTEGER type field from a sql query result. 
+	 */
+	private static ArrayList<Integer> GetFieldIntList(String sql, String fieldName)
+	{
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		
+		Connection c = null;
+		Statement stmt = null;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+		    c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+		    c.setAutoCommit(false);
+
+		    stmt = c.createStatement();
+		    ResultSet rs = stmt.executeQuery(sql);
+		      
+		    while ( rs.next() ) {
+		    	// add course id
+		    	list.add(rs.getInt(fieldName));
+		    }
+		    rs.close();
+		    stmt.close();
+		    c.close();
+		} catch ( Exception e ) {		
+		}
+		return list;
+	}
+	
+	
+	/**
 	 * Returns the max of a field in a particular table
 	 */
 	private static int GetMaxFieldInTable(String fieldName, String tableName)
@@ -712,39 +743,16 @@ VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',
 				return false;
 		}
 
-		return true;
+		// update student courses 
+		String updateUserCourses = String.format(
+				"INSERT INTO student_courses (user_id, course_id) \n" + 
+				"VALUES (%d, %d);", userId, courseId);
+		
+		return ExecuteNonQuery(updateUserCourses);
 	}	
 	
 
-	/**
-	 * returns a list of integers corresponding to an INTEGER type field from a sql query result. 
-	 */
-	private static ArrayList<Integer> GetFieldIntList(String sql, String fieldName)
-	{
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		
-		Connection c = null;
-		Statement stmt = null;
-		
-		try {
-			Class.forName("org.sqlite.JDBC");
-		    c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
-		    c.setAutoCommit(false);
-
-		    stmt = c.createStatement();
-		    ResultSet rs = stmt.executeQuery(sql);
-		      
-		    while ( rs.next() ) {
-		    	// add course id
-		    	list.add(rs.getInt(fieldName));
-		    }
-		    rs.close();
-		    stmt.close();
-		    c.close();
-		} catch ( Exception e ) {		
-		}
-		return list;
-	}
+	
 	
 }
 
