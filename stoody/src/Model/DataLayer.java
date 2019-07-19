@@ -10,7 +10,7 @@ public class DataLayer {
 	public static DataLayer _instance;
 	
 	// Singleton Property - holds current user information
-	public static DataLayer get_Instance() {
+	public static DataLayer getInstance() {
 		if (_instance == null)
 			_instance = new DataLayer();
 		return _instance;
@@ -44,14 +44,14 @@ public class DataLayer {
 	{
 		if (username.equals("Admin") && password.equals("HITadmin1234"))
 		{
-		 	get_Instance()._currentUser = new Admin();
+		 	getInstance()._currentUser = new Admin();
 			return eUserType.administrator;
 		}
 		
 		RegularUser user = SQLiteDataLayer.Login(username, password);
 		if (user != null)
 		{
-			get_Instance()._currentUser  = user;
+			getInstance()._currentUser  = user;
 			return user.get_userType();
 		}
 		
@@ -66,7 +66,7 @@ public class DataLayer {
 	 */
 	public  boolean AddNewRegularUser(RegularUser user) {
 		// Authorization test
-		if (get_Instance().get_currnetUser().get_userType() == eUserType.administrator)
+		if (getInstance().get_currnetUser().get_userType() == eUserType.administrator)
 			return SQLiteDataLayer.AddUser(user);
 		return false;
 	}
@@ -89,7 +89,9 @@ public class DataLayer {
 	 */
 	public boolean AddCourse(Course course)
 	{
-		// TODO
+		RegularUser user = getInstance().GetCurrentRegularUser();
+		if (user.get_userType() == eUserType.teacher)
+			return SQLiteDataLayer.AddCourse(course, user.get_id());
 		return false;
 	}
 	
@@ -101,7 +103,7 @@ public class DataLayer {
 	public static boolean AddEvent(StoodyEvent event) {
 
 		// Authorization - make suer that only the teacher adds a new course.
-		RegularUser user = get_Instance().GetCurrentRegularUser();
+		RegularUser user = getInstance().GetCurrentRegularUser();
 		if (user != null)
 		{			
 			// user is either a student or a teacher
@@ -134,7 +136,7 @@ public class DataLayer {
 	 */
 	public  ArrayList<StoodyEvent> GetEventsListByDate(Date date)
 	{
-		RegularUser user = get_Instance().GetCurrentRegularUser();
+		RegularUser user = getInstance().GetCurrentRegularUser();
 	
 		return SQLiteDataLayer.GetEventsListByDate(user.get_id(), date);
 	}
@@ -148,9 +150,9 @@ public class DataLayer {
 	public  boolean SetEventStatus(StoodyEvent event, boolean willAttend)
 	{
 		RegularUser user;
-		if (get_Instance().get_currnetUser().get_userType() == eUserType.student)
+		if (getInstance().get_currnetUser().get_userType() == eUserType.student)
 		{
-			user =  (RegularUser) get_Instance().get_currnetUser();
+			user =  (RegularUser) getInstance().get_currnetUser();
 			//TODO
 		}
 		return true;
@@ -179,8 +181,8 @@ public class DataLayer {
 	 */
 	public ArrayList<CourseDetails> getCourseList()
 	{
-		// TODO
-		return null;
+		return SQLiteDataLayer.GetCourseList(getInstance().GetCurrentRegularUser().get_id());
+		
 	}
 	
 	/**

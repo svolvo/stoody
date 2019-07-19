@@ -45,7 +45,7 @@ public class ViewLogin {
 		// login click event
 		ActionListener loginClick =	new ActionListener(){  
 			public void actionPerformed(ActionEvent e){
-				eUserType userType = DataLayer.get_Instance().Login(usernameTextField.getText(), passwordTextField.getText());
+				eUserType userType = DataLayer.getInstance().Login(usernameTextField.getText(), passwordTextField.getText());
 				
 				
 				// show add users window if the user is an administrator

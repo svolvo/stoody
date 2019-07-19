@@ -113,7 +113,7 @@ public class ViewDisplayEvents
 	                        				"End Date",
 	                        				"Location"};
 			    	int eventAmount = 0;//need to find how much event we have on date that the user pick
-			    	ArrayList<StoodyEvent> eventList = DataLayer.get_Instance().GetEventsListByDate(selectedDate);
+			    	ArrayList<StoodyEvent> eventList = DataLayer.getInstance().GetEventsListByDate(selectedDate);
 			    	eventAmount = eventList.size();
 			    	
 			    	//this code we use for putting the event to the list and after that we show the list
@@ -123,8 +123,8 @@ public class ViewDisplayEvents
 			    	{
 			    		data[i][0] = eventList.get(i).getEventType();
 			    		data[i][1] = eventList.get(i).getTitle();
-			    		data[i][2] = DateTimeStringConverter.DateToStringGetDisplayTime(eventList.get(i).getStartDateTime());
-			    		data[i][3] = DateTimeStringConverter.DateToStringGetDisplayTime(eventList.get(i).getEndDateTime());
+			    		data[i][2] = DateHelper.DateToStringGetDisplayTime(eventList.get(i).getStartDateTime());
+			    		data[i][3] = DateHelper.DateToStringGetDisplayTime(eventList.get(i).getEndDateTime());
 			    		data[i][4] = eventList.get(i).getLocation();
 			    	}
 			    	
@@ -162,7 +162,7 @@ public class ViewDisplayEvents
                         				"Last Name",
                         				"Satus"};
 						    	int userAmount = 0;//need to find how much event we have on date that the user pick
-						    	ArrayList<EventParticipant> participantsList = DataLayer.get_Instance().GetEventParticipants(eventList.get(row));
+						    	ArrayList<EventParticipant> participantsList = DataLayer.getInstance().GetEventParticipants(eventList.get(row));
 						    	userAmount = participantsList.size();
 					
 						    	//this code we use for putting the event to the list and after that we show the list
@@ -222,7 +222,7 @@ public class ViewDisplayEvents
 								deleteButton.addActionListener(new ActionListener(){  
 									public void actionPerformed(ActionEvent e){
 										// search for events
-										DataLayer.get_Instance().SetEventStatus(eventList.get(row), false);
+										DataLayer.getInstance().SetEventStatus(eventList.get(row), false);
 										
 										}
 									});
@@ -230,7 +230,7 @@ public class ViewDisplayEvents
 								acceptButton.addActionListener(new ActionListener(){  
 									public void actionPerformed(ActionEvent e){
 										// search for events
-										DataLayer.get_Instance().SetEventStatus(eventList.get(row), true);
+										DataLayer.getInstance().SetEventStatus(eventList.get(row), true);
 										
 										}
 									});

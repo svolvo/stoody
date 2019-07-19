@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,36 @@ public class SQLiteDataLayer {
 	
 	
 	
+	final static String CREATE_COURSE_TABLE = 
+			"CREATE TABLE \"course\" (\n" + 
+			"	\"course_id\"	INTEGER PRIMARY KEY AUTOINCREMENT,\n" + 
+			"	\"name\"	INTEGER NOT NULL,\n" + 
+			"	\"location\"	TEXT NOT NULL,\n" + 
+			"	\"day_of_week\"	INTEGER NOT NULL,\n" + 
+			"	\"start_time\"	TEXT NOT NULL,\n" + 
+			"	\"end_time\"	TEXT NOT NULL,\n" + 
+			"	\"course_start_date\"	TEXT NOT NULL,\n" + 
+			"	\"course_end_date\"	TEXT NOT NULL," +
+			"	\"moed_a_start_date_time\"	TEXT NOT NULL,\n" + 
+			"	\"moed_a_end_date_time\"	TEXT NOT NULL,\n" + 
+			"	\"moed_a_location\"	TEXT NOT NULL,\n" + 
+			"	\"moed_b_start_date_time\"	TEXT NOT NULL,\n" + 
+			"	\"moed_b_end_date_time\"	TEXT NOT NULL,\n" + 
+			"	\"moed_b_location\"	TEXT NOT NULL\n" + 
+			");";
+	
+	
+	final static String CREATE_COURSE_EVENTS_TABLE = 
+			"CREATE TABLE \"course_events\" (\n" + 
+			"	\"course_id\"	INTEGER NOT NULL,\n" + 
+			"	\"event_id\"	INTEGER NOT NULL\n" + 
+			");";
+	
+	final static String CREATE_STUDENT_COURSES_TABLE = 
+			"CREATE TABLE \"student_courses\" (\n" + 
+			"	\"user_id\"	INTEGER NOT NULL,\n" + 
+			"	\"course_id\"	INTEGER NOT NULL\n" + 
+			");";
 	
 	public static String GetDateTimeByStringFormat(Date date)
 	{
@@ -65,6 +96,11 @@ public class SQLiteDataLayer {
 		}
 	}
 	
+	/**
+	 * Executes an SQL statement where the return value doesn't matter
+	 * @param sql
+	 * @return true if execution succeeded, false otherwise.
+	 */
 	private static boolean ExecuteNonQuery(String sql)
 	{
   		Connection c = null;
@@ -83,6 +119,46 @@ public class SQLiteDataLayer {
 			 return false;
 		 }
 		return true;
+	}
+	
+	
+	/**
+	 * Executes an SQL statement and then parses an integer for the specified fieldName
+	 * @param sql
+	 * @param fieldName
+	 * @param error returns error if execution or cast fails
+	 * @return field value from SQL
+	 */
+	private static int ExecuteScalar(String sql, String fieldName, int error)
+	{
+		 int result = error;
+		 Connection c = null;
+		 Statement stmt = null;
+		 try {
+			 Class.forName("org.sqlite.JDBC");
+			 c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+			 c.setAutoCommit(false);
+			 stmt = c.createStatement();
+			 ResultSet resultSet = stmt.executeQuery(sql);
+			 resultSet.next();
+			 result = resultSet.getInt(fieldName);
+			 stmt.close();
+			 c.commit();
+			 c.close();
+			 return result;
+		 } catch ( Exception e ) {
+			 return error;
+		 }
+		 
+	}
+	
+	/**
+	 * Returns the max of a field in a particular table
+	 */
+	private static int GetMaxFieldInTable(String fieldName, String tableName)
+	{
+		String sqlGetMax = String.format("SELECT max(%s) as %s from %s;", fieldName, fieldName, tableName);
+		return ExecuteScalar(sqlGetMax, fieldName, 0);
 	}
 	
 	/**
@@ -149,7 +225,10 @@ public class SQLiteDataLayer {
 			// SQLite DB file doesn't exist or does not contain any table defections.
 			createTable(CREATE_USER_TABLE);
 			createTable(CREATE_EVENT_TABLE);
+			createTable(CREATE_COURSE_TABLE);
 			createTable(CREATE_USER_EVENTS_TABLE);	
+			createTable(CREATE_COURSE_EVENTS_TABLE);
+			createTable(CREATE_STUDENT_COURSES_TABLE);
 		}	
 	}
 
@@ -336,28 +415,11 @@ public class SQLiteDataLayer {
 		 if (!result)
 			 return false;
 		 
-		 Connection c = null;
-		 Statement stmt = null;
-
+		 
 		
 		 
-		 String getEventId = "SELECT max(event_id) from event;;";
-		 int eventId = -1;
-		 try {
-			 Class.forName("org.sqlite.JDBC");
-			 c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
-			 c.setAutoCommit(false);
-			 stmt = c.createStatement();
-			 ResultSet resultSet = stmt.executeQuery(getEventId);
-			 resultSet.next();
-			 eventId = resultSet.getInt("max(event_id)");
-			 stmt.close();
-			 c.commit();
-			 c.close();
-		 } catch ( Exception e ) {
-			 return false;
-		 }
-		 
+		 int eventId = GetMaxFieldInTable("event_id", "event");
+
 		 
 		 String insertUserEvent = String.format("INSERT into user_events (user_id, event_id, status) VALUES (%d, %d, %d);", 
 				 userId, eventId, eEventStatus.attending.ordinal());
@@ -469,8 +531,190 @@ public class SQLiteDataLayer {
 		   }
 		   
 		   return participiants;
+	}
+
+	public static boolean AddCourse(Course course, int userId) {
+		// TODO Auto-generated method stub
+		/*
+		 INSERT INTO course (name, location, day_of_week, start_time, end_time, course_start_date, course_end_date, 
+moed_a_start_date_time, moed_a_end_date_time, moed_a_location, moed_b_start_date_time, moed_b_end_date_time, moed_b_location)
+VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',  
+'2019-07-01 09:00', '2019-07-01 12:00', '8-210', 
+'2019-07-17 09:00', '2019-07-17 12:00', '8-300' );
+		 * */
+		
+		String sql = String.format(
+				"INSERT INTO course (name, location, day_of_week, start_time, end_time, course_start_date, course_end_date, \n" + 
+				"moed_a_start_date_time, moed_a_end_date_time, moed_a_location, moed_b_start_date_time, moed_b_end_date_time, moed_b_location)\n" + 
+				"VALUES ('%s', '%s', %d, '%s', '%s', '%s', '%s',  \n" + 
+				"'%s', '%s', '%s', \n" + 
+				"'%s', '%s', '%s' );", 
+				course.get_courseName(), 
+				course.get_location(),
+				course.get_courseDay().ordinal(), 
+				DateHelper.DateToStringGetDisplayTime(course.get_startTimeEveryWeek()),
+				DateHelper.DateToStringGetDisplayTime(course.get_endTimeEveryWeek()),
+				DateHelper.GetShortDateString(course.get_courseStartDate()),
+				DateHelper.GetShortDateString(course.get_courseEndDate()),
+				DateHelper.GetDateTimeByStringFormat(course.get_moedA_Start()),
+				DateHelper.GetDateTimeByStringFormat(course.get_moedA_End()),
+				course.get_locationA(),
+				DateHelper.GetDateTimeByStringFormat(course.get_moedB_Start()),
+				DateHelper.GetDateTimeByStringFormat(course.get_moedB_End()),
+				course.get_locationB()
+				);
+		
+		
+		if (!ExecuteNonQuery(sql))
+			 return false;
+		
+		// get max event id 
+		int eventId = GetMaxFieldInTable("event_id", "event");
+		// get max courseId
+		int courseId = GetMaxFieldInTable("course_id", "course");
+		 
+		// current start date
+		Date current = course.get_courseStartDate();
+		
+		// set start time to match current date
+		current.setHours(course.get_startTimeEveryWeek().getHours());
+		current.setMinutes(course.get_startTimeEveryWeek().getMinutes());
+		int hours = course.get_endTimeEveryWeek().getHours() - course.get_startTimeEveryWeek().getHours();
+		int minutes = course.get_endTimeEveryWeek().getMinutes() - course.get_startTimeEveryWeek().getMinutes();
+
+		
+		// add days to fit the day of the week after the start date
+		int dayOfWeekStart = current.getDay();
+		int addDays = 0;
+		while (course.get_courseDay().ordinal() != dayOfWeekStart)
+		{
+			// increment add days and terminate condition
+			dayOfWeekStart = (dayOfWeekStart + 1) % 7;
+			addDays++;
+		}
+
+		if (addDays != 0)
+			current = DateHelper.AddDays(current, addDays);
+		
+
+		// set end date upper limit for course events
+		Date end = DateHelper.AddDays(course.get_courseEndDate(), 1);
+		
+		
+		int count = 1;
+		while (current.before(end))
+		{
+			// Add course event to events table 
+			StoodyEvent stoodyEvent = new StoodyEvent(eEventType.course, course.get_courseName(), current, DateHelper.AddTime(current, hours, minutes), course.get_location());			
+			if (!AddEvent(stoodyEvent, userId))
+				return false;
+			
+			// Add records to course_events table
+			String sqlUpdateCourseEvents = String.format("INSERT INTO course_events (course_id, event_id) VALUES (%d, %d);", courseId, eventId + count);
+			if (!ExecuteNonQuery(sqlUpdateCourseEvents))
+				return false;
+			
+			// increment current by a week
+			current = DateHelper.AddDays(current, 7);
+			count++;
+		}
+		
+		
+		
+		
+		
+		return true;
+		
+	}
+
+	public static ArrayList<CourseDetails> GetCourseList(int get_id) {
+		
+		ArrayList<CourseDetails> courses = new ArrayList<CourseDetails>();
+		// get all the course id which the users is already subscribed to.
+		String sqlGetUserCourseIds = "SELECT course_id FROM student_courses;";
+
+		ArrayList<Integer> userCourses = new ArrayList<Integer>();
+		Connection c = null;
+		Statement stmt = null;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+		    c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+		    c.setAutoCommit(false);
+
+		    stmt = c.createStatement();
+		    ResultSet rs = stmt.executeQuery(sqlGetUserCourseIds);
+		      
+		    while ( rs.next() ) {
+		    	// add course id
+		    	userCourses.add(rs.getInt("course_id"));
+		    }
+		    rs.close();
+		    stmt.close();
+		    c.close();
+		} catch ( Exception e ) {		
+		}
+		
+
+		// Get all course list
+		String sqlGetCourseList = "SELECT * FROM course;";
+		
+		c = null;
+		stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+		    c = DriverManager.getConnection("jdbc:sqlite:stoody.db");
+		    c.setAutoCommit(false);
+
+		    stmt = c.createStatement();
+		    ResultSet rs = stmt.executeQuery(sqlGetCourseList);
+		      		    
+		    while ( rs.next() ) {
+		    	
+		    	int course_id = rs.getInt("course_id");
+		    	
+		    	// create course object
+		    	String courseName = rs.getString("name");
+		    	Date courseStartDate = DateHelper.GetDateFromString(rs.getString("course_start_date")); 
+		    	Date courseEndDate = DateHelper.GetDateFromString(rs.getString("course_end_date")); 
+		    	Date startTimeEveryWeek = DateHelper.GetDateFromString("2001-01-01 " + rs.getString("start_time")); 
+				Date endTimeEveryWeek = DateHelper.GetDateFromString("2001-01-01 " + rs.getString("end_time")); 
+				String location = rs.getString("location");
+				eCourseDays courseDay = eCourseDays.values()[rs.getInt("day_of_week")];
+				Date moedA_Start  = DateHelper.GetDateFromString(rs.getString("moed_a_start_date_time")); 
+				Date moedA_End = DateHelper.GetDateFromString(rs.getString("moed_a_end_date_time")); 
+				String locationA = rs.getString("moed_a_location");
+				Date moedB_Start = DateHelper.GetDateFromString(rs.getString("moed_b_start_date_time"));  
+				Date moedB_End = DateHelper.GetDateFromString(rs.getString("moed_b_end_date_time"));  
+				String locationB = rs.getString("moed_b_location");
+		    	 
+		    	
+		    	
+		    	Course course = new Course(courseName, courseStartDate, courseEndDate, startTimeEveryWeek,
+		    			endTimeEveryWeek, location, courseDay, moedA_Start, moedA_End,
+		    			locationA, moedB_Start, moedB_End, locationB);
+		    	
+		    	
+		    	eUserCourseStatus subscriptionStatus = eUserCourseStatus.unsubscribed;
+		    	
+		    	if (userCourses.contains(course_id))
+		    		subscriptionStatus = eUserCourseStatus.subscribed;
+		    	
+		    	
+		    	courses.add(new CourseDetails(course_id, course, subscriptionStatus));
+		    }
+		    rs.close();
+		    stmt.close();
+		    c.close();
+		} catch ( Exception e ) {		
+		}
+
+		
+		
+		return courses;
 	}	
 	
+
 	
 }
 

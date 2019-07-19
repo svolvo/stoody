@@ -2,6 +2,7 @@
 package View;
 
 import java.awt.Font;
+
 import java.awt.event.*;
 import java.util.Date;
 import java.util.Properties;
@@ -15,8 +16,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import Model.DataLayer;
 import Model.Student;
-import Model.eCourseDays;
 import Model.Course;
+import Model.eCourseDays;
 
 public class ViewAddNewCourse {
 	
@@ -56,12 +57,12 @@ public class ViewAddNewCourse {
 			JSpinner timeSpinnerStartB = new JSpinner( new SpinnerDateModel() );
 			JSpinner timeSpinnerEndB = new JSpinner( new SpinnerDateModel() );
 
-			JSpinner.DateEditor timeEditorStart = new JSpinner.DateEditor(timeSpinnerStart, "HH:mm:ss");
-			JSpinner.DateEditor timeEditorEnd = new JSpinner.DateEditor(timeSpinnerEnd, "HH:mm:ss");
-			JSpinner.DateEditor timeEditorStartA = new JSpinner.DateEditor(timeSpinnerStartA, "HH:mm:ss");
-			JSpinner.DateEditor timeEditorStartB = new JSpinner.DateEditor(timeSpinnerStartB, "HH:mm:ss");
-			JSpinner.DateEditor timeEditorEndA = new JSpinner.DateEditor(timeSpinnerEndA, "HH:mm:ss");
-			JSpinner.DateEditor timeEditorEndB = new JSpinner.DateEditor(timeSpinnerEndB, "HH:mm:ss");
+			JSpinner.DateEditor timeEditorStart = new JSpinner.DateEditor(timeSpinnerStart, "HH:mm");
+			JSpinner.DateEditor timeEditorEnd = new JSpinner.DateEditor(timeSpinnerEnd, "HH:mm");
+			JSpinner.DateEditor timeEditorStartA = new JSpinner.DateEditor(timeSpinnerStartA, "HH:mm");
+			JSpinner.DateEditor timeEditorStartB = new JSpinner.DateEditor(timeSpinnerStartB, "HH:mm");
+			JSpinner.DateEditor timeEditorEndA = new JSpinner.DateEditor(timeSpinnerEndA, "HH:mm");
+			JSpinner.DateEditor timeEditorEndB = new JSpinner.DateEditor(timeSpinnerEndB, "HH:mm");
 
 			
 			timeSpinnerStart.setEditor(timeEditorStart);
@@ -70,7 +71,15 @@ public class ViewAddNewCourse {
 			timeSpinnerEndA.setEditor(timeEditorEndA);
 			timeSpinnerStartB.setEditor(timeEditorStartB);
 			timeSpinnerEndB.setEditor(timeEditorEndB);
-
+			
+			
+			JComboBox _day= new JComboBox();
+			
+			for (eCourseDays day : eCourseDays.values())
+			{
+				_day.addItem(day.toString());
+			}
+			
 
 					
 			// add labels
@@ -97,7 +106,6 @@ public class ViewAddNewCourse {
 			
 			// add text fields
 			final JTextField nameTextField =new JTextField();
-			final JTextField dayTextField =new JTextField();
 			final JTextField locationTextField =new JTextField();
 			final JTextField locationTestATextField =new JTextField();
 			final JTextField locationTestBTextField =new JTextField();
@@ -105,7 +113,7 @@ public class ViewAddNewCourse {
 			// add button
 			JButton addCourseButton = new JButton("Add course");  
 
-			// set bounds
+			// set bounds//
 			detailsTestALabel.setBounds(400, 30,200,20);
 			dateTestALabel.setBounds(400, 70,200,20);
 			datePickerMoedA.setBounds(400, 90 , 200, 20);
@@ -131,7 +139,7 @@ public class ViewAddNewCourse {
 			nameLabel		.setBounds(50,70, 200,20);  
 			nameTextField	.setBounds(50,90, 200,20);  
 			dayLabel.setBounds(50, 120, 200, 20);
-			dayTextField.setBounds(50, 140, 200, 20);
+			_day.setBounds(50, 140, 200, 20);
 			dateStartLabel.setBounds(50,170, 200,20);
 			datePickerStart.setBounds(50,190, 200,20);
 			timeStartLabel.setBounds(50,220, 200,20);  
@@ -144,6 +152,8 @@ public class ViewAddNewCourse {
 			locationTextField.setBounds(50, 390, 200, 20);			
 			
 			addCourseButton.setBounds(50,450,120,30);  
+			
+			//setFont
 			detailsCourseLabel.setFont(new Font("devid", Font.PLAIN, 21));
 			detailsTestALabel.setFont(new Font("devid", Font.PLAIN, 16));
 			detailsTestBLabel.setFont(new Font("devid", Font.PLAIN, 16));
@@ -153,7 +163,7 @@ public class ViewAddNewCourse {
 			// add items to frame
 		    frame.add(nameLabel);
 		    frame.add(dayLabel);
-		    frame.add(dayTextField);
+		    frame.add(_day);
 		    frame.add(dateStartLabel);
 		    frame.add(timeStartLabel);
 		    frame.add(dateEndLabel);
@@ -195,66 +205,67 @@ public class ViewAddNewCourse {
 		    
 		    addCourseButton.addActionListener(new ActionListener(){  
 				public void actionPerformed(ActionEvent e){
-					// Add user click event
-					
+					// Add Course click event
+					boolean _full = false;
 					Course C = new Course();
 					Date _start, _end, _startA, _startB, _endA, _endB;
 					
-					C._courseName = nameTextField.getText().toString();
-					C._startTimeEveryWeek= (Date)datePickerStart.getModel().getValue();
-					_start = (Date)timeSpinnerStart.getModel().getValue();
-					C._startTimeEveryWeek.setHours(_start.getHours());
-					C._startTimeEveryWeek.setMinutes(_start.getMinutes());
-					C._startTimeEveryWeek.setSeconds(_start.getSeconds());
-					C._endTimeEveryWeek= (Date)datePickerEnd.getModel().getValue();
-					_end = (Date)timeSpinnerEnd.getModel().getValue();
-					C._endTimeEveryWeek.setHours(_end.getHours());
-					C._endTimeEveryWeek.setMinutes(_end.getMinutes());
-					C._endTimeEveryWeek.setSeconds(_end.getSeconds());
-					C._location= locationTextField.getText().toString();
 					
-					// TODO
-					// Day of week from dropdown
-					C._courseDay = eCourseDays.Sunday;
+					//Check if all the details are complete
 					
-					
-					
-					C.moedA_Start=(Date)datePickerMoedA.getModel().getValue();
-					_startA = (Date)timeSpinnerStartA.getModel().getValue();
-					C.moedA_Start.setHours(_startA.getHours());
-					C.moedA_Start.setMinutes(_startA.getMinutes());
-					C.moedA_Start.setSeconds(_startA.getSeconds());
-					C.moedA_End=(Date)datePickerMoedA.getModel().getValue();
-					_endA = (Date)timeSpinnerEndA.getModel().getValue();
-					C.moedA_End.setHours(_endA.getHours());
-					C.moedA_End.setMinutes(_endA.getMinutes());
-					C.moedA_End.setSeconds(_endA.getSeconds());
-					C._locationA= locationTestATextField.getText().toString();	
-					C.moedB_Start=(Date)datePickerMoedB.getModel().getValue();
-					_startB = (Date)timeSpinnerStartB.getModel().getValue();
-					C.moedB_Start.setHours(_startB.getHours());
-					C.moedB_Start.setMinutes(_startB.getMinutes());
-					C.moedB_Start.setSeconds(_startB.getSeconds());
-					C.moedB_End=(Date)datePickerMoedB.getModel().getValue();
-					_endB = (Date)timeSpinnerEndB.getModel().getValue();
-					C.moedB_End.setHours(_endB.getHours());
-					C.moedB_End.setMinutes(_endB.getMinutes());
-					C.moedB_End.setSeconds(_endB.getSeconds());
-					C._locationB= locationTestBTextField.getText().toString();
-							
-					
-					if (DataLayer.get_Instance().AddCourse(C))
+					//Missing details
+					if (nameTextField.getText().equals("") || locationTextField.getText().equals("") || locationTestATextField.getText().equals("") || locationTestBTextField.getText().equals("") || datePickerStart.getModel().getValue() == null || datePickerEnd.getModel().getValue() == null || datePickerMoedA.getModel().getValue() == null || datePickerMoedB.getModel().getValue() == null)
 					{
+						
+						
 						JOptionPane.showMessageDialog(frame,
+							    "Please complete ALL the details.",
+							    "",
+							    JOptionPane.PLAIN_MESSAGE);
+						
+						
+						
+					}
+					else //All details are complete
+					{ 
+						
+						C.set_courseName(nameTextField.getText().toString());
+						C.set_courseStartDate((Date)datePickerStart.getModel().getValue());
+						_start = (Date)timeSpinnerStart.getModel().getValue();
+						C.set_startTimeEveryWeek(_start);
+						C.set_courseEndDate((Date)datePickerEnd.getModel().getValue());
+						_end = (Date)timeSpinnerEnd.getModel().getValue();
+						C.set_endTimeEveryWeek(_end);
+						C.set_location(locationTextField.getText().toString());
+						C.set_courseDay(eCourseDays.valueOf(_day.getSelectedItem().toString()));
+						
+						_startA = (Date)timeSpinnerStartA.getModel().getValue();
+						C.set_moedA_Start((Date)datePickerMoedA.getModel().getValue(), _startA);
+						_endA = (Date)timeSpinnerEndA.getModel().getValue();
+						C.set_moedA_End((Date)datePickerMoedA.getModel().getValue(), _endA);
+						C.set_locationA(locationTestATextField.getText().toString());
+						
+						_startB = (Date)timeSpinnerStartB.getModel().getValue();
+						C.set_moedB_Start((Date)datePickerMoedB.getModel().getValue(), _startB);
+						_endB = (Date)timeSpinnerEndB.getModel().getValue();
+						C.set_moedB_End((Date)datePickerMoedB.getModel().getValue(), _endB);
+						C.set_locationB( locationTestBTextField.getText().toString());
+						
+						
+						if(DataLayer.getInstance().AddCourse(C))
+						{
+							JOptionPane.showMessageDialog(frame,
 							    "Added course Successfully.",
 							    "",
 							    JOptionPane.PLAIN_MESSAGE);
-					}
-					else {
-						JOptionPane.showMessageDialog(frame,
-							    "Oops, exist another event in this time. Try again with differnt details.",
-							    "",
-							    JOptionPane.PLAIN_MESSAGE);
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(frame,
+								    "Oops, exist another event in this time. Try again with differnt details.",
+								    "",
+								    JOptionPane.PLAIN_MESSAGE);
+						}
 					}
 				}
 		    	

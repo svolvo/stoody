@@ -70,10 +70,10 @@ public class ViewAddUser {
 			{
 				if (!isteacherCheckBox.isSelected())
 				{
-				success = DataLayer.get_Instance().AddNewRegularUser(new Student(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
+				success = DataLayer.getInstance().AddNewRegularUser(new Student(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
 				}
 				else {
-					success = DataLayer.get_Instance().AddNewRegularUser(new Teacher(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
+					success = DataLayer.getInstance().AddNewRegularUser(new Teacher(Integer.parseInt(idTextField.getText()), firstNameTextField.getText(), lastNameTextField.getText()));
 				}
 		
 			} 

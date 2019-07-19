@@ -51,7 +51,7 @@ public class ViewChangePassword {
 	 		
 	 		String _password;
 	 		_password = newPasswordTextField.getText().toString();
-	 		boolean success = DataLayer.get_Instance().ChagngePassword(_password); //Checks if a password is valid	
+	 		boolean success = DataLayer.getInstance().ChagngePassword(_password); //Checks if a password is valid	
 	 		
 	 		if (!(success))
 	 		{

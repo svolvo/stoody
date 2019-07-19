@@ -115,7 +115,7 @@ public class ViewAddNewMeeting
 				};
 		int eventAmount = 0;//need to find how much event we have on date that the user pick
 		
-		eventList = DataLayer.get_Instance().GetReuglarUsersList();
+		eventList = DataLayer.getInstance().GetReuglarUsersList();
 		eventAmount = eventList.size();
 		
 		//this code we use for putting the event to the list and after that we show the list
@@ -234,7 +234,7 @@ public class ViewAddNewMeeting
 				
 				System.out.println(dateStart);
 				System.out.println();
-				DataLayer.get_Instance().AddMeeting(event,userId);//need to add func AddMeeting
+				DataLayer.getInstance().AddMeeting(event,userId);//need to add func AddMeeting
 				
 				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Israel"));
 				

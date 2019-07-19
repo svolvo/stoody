@@ -41,10 +41,10 @@ public class SQLiteTesting {
 			   e.printStackTrace();
 		   }
 		   
-		   StoodyEvent event = new StoodyEvent(eEventType.course, "English", startDate, startDate, "21");
+		   StoodyEvent event = new StoodyEvent(eEventType.course, "English2", startDate, startDate, "21");
 		   
 		   
-		   boolean tablesExist = SQLiteDataLayer.AddEvent(event, 122);
+		   boolean tablesExist = SQLiteDataLayer.AddEvent(event, 333);
 		   
 		   // assert
 		   assertTrue(tablesExist);
