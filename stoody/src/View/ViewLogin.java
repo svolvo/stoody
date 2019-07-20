@@ -57,7 +57,16 @@ public class ViewLogin {
 				}
 				else {
 					frame.dispose();
-					ViewDisplayEvents.DisplayView();
+
+					// test if user should reset initial password
+					if (usernameTextField.getText().equals(passwordTextField.getText()))
+					{
+						ViewChangePassword.DisplayView();
+					}
+					else 
+					{
+						ViewDisplayEvents.DisplayView();
+					}
 				}
 			}  
 		};

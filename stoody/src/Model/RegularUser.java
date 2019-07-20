@@ -36,20 +36,6 @@ public abstract class RegularUser extends User{
 
 	
 	
-	// Methods
-	/**
-	 * Returns true if the user should reset the password false otherwise
-	 */
-	public boolean ShouldResetPassword() {
-		try {
-			return _id == Integer.parseInt(_password);
-		}
-		catch (NumberFormatException e){
-			return false;
-		}
-	}
-	
-	
 	
 	
 	

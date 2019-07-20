@@ -42,7 +42,6 @@ public class ViewAddUser {
 		
 		
 		addUserButton.setBounds(50,250,95,30);  
-		    
 		
 		// add items to frame
 	    frame.add(idLabel);
@@ -54,7 +53,18 @@ public class ViewAddUser {
 	    frame.add(lastNameTextField);
 	    frame.add(isteacherCheckBox);
 	    frame.add(addUserButton);
-
+	    
+	    // add logout option
+	    JButton logout = new JButton("Logout");  
+	    logout.setBounds(50, 300, 95, 30);    
+	    frame.add(logout);	    
+		logout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				frame.dispose();
+				ViewLogin.DisplayView();
+			}
+		});
 	    
 	    frame.setSize(400,400);  
 	    frame.setLayout(null);  
@@ -81,6 +91,7 @@ public class ViewAddUser {
 				
 			}
 			
+			// show Admin that the user was added or not
 			if (success)
 			{
 				JOptionPane.showMessageDialog(frame,
@@ -100,16 +111,12 @@ public class ViewAddUser {
 					    "Oops, Something went wrong make sure the inputs are corret",
 					    "",
 					    JOptionPane.PLAIN_MESSAGE);
-			}
-			
-			//DataLayer.Login(usernameTextField.getText(), passwordTextField.getText());
-			
-			
-			
-			//SQLiteJDBC.Insert(usernameTextField.getText(), Integer.parseInt(passwordTextField.getText()), 1);
+				}
         	}  
 		});  
 		     
+		
+	
 		return frame;
 	}
 }

@@ -89,8 +89,32 @@ public class DataLayer {
 	 */
 	public boolean AddCourse(Course course)
 	{
+		// check if the course collides with a location or a place
+		ArrayList<CourseDetails> courses =  SQLiteDataLayer.GetCourseList(-1);
+		for (CourseDetails courseDetails : courses)
+		{
+			Course existingCourse = courseDetails.get_course();
+			if (
+				((existingCourse.get_location().equals(course.get_location())) 						&&
+				(existingCourse.get_courseDay() == course.get_courseDay())    						&& 
+				(existingCourse.get_startTimeEveryWeek().equals(course.get_startTimeEveryWeek())))   
+				||
+				((existingCourse.get_locationA().equals(course.get_locationA())) 						&&
+				(existingCourse.get_moedA_Start().equals(course.get_moedA_Start())))	
+				||
+				((existingCourse.get_locationB().equals(course.get_locationB())) 						&&
+				(existingCourse.get_moedB_Start().equals(course.get_moedB_Start())))	
+				)
+			{
+				return false;
+			}
+		}
+		
+		
 		RegularUser user = getInstance().GetCurrentRegularUser();
 		if (user.get_userType() == eUserType.teacher)
+			
+			// Add course
 			return SQLiteDataLayer.AddCourse(course, user.get_id());
 		return false;
 	}
@@ -124,8 +148,10 @@ public class DataLayer {
 	 */
 	public boolean AddMeeting(StoodyEvent event, List<Integer> userIds)
 	{
-		// TODO
-		return false;
+		if (event.getEventType() != eEventType.user_meeting)
+			return false;
+		
+		return SQLiteDataLayer.AddMeeting(event, userIds, getInstance().GetCurrentRegularUser().get_id());
 	}
 	
 	
@@ -149,13 +175,10 @@ public class DataLayer {
 	 */
 	public  boolean SetEventStatus(StoodyEvent event, boolean willAttend)
 	{
-		RegularUser user;
-		if (getInstance().get_currnetUser().get_userType() == eUserType.student)
-		{
-			user =  (RegularUser) getInstance().get_currnetUser();
-			//TODO
-		}
-		return true;
+		int userId = getInstance().GetCurrentRegularUser().get_id();
+
+		return SQLiteDataLayer.SetEventStatus(event.getId(), userId, willAttend); 
+		
 	}
 	
 	/**
@@ -201,9 +224,13 @@ public class DataLayer {
 	 * @param password
 	 * @return true if password was changed successfully, false otherwise.
 	 */
-	public boolean ChagngePassword(String _password) {
-		// Changes a password to a regular user
-		// TODO
-		return true;
+	public boolean ChangePassword(String newPassword) {
+		
+		if (newPassword.matches("[A-Za-z0-9]+") && newPassword.length() >= 8) 
+		{
+			int userId = getInstance().GetCurrentRegularUser().get_id();
+			return SQLiteDataLayer.ChangePassword(userId, newPassword);
+		}
+		return false;
 	}
 }

@@ -16,6 +16,7 @@ import java.util.TimeZone;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
@@ -234,7 +235,22 @@ public class ViewAddNewMeeting
 				
 				System.out.println(dateStart);
 				System.out.println();
-				DataLayer.getInstance().AddMeeting(event,userId);//need to add func AddMeeting
+				boolean result = DataLayer.getInstance().AddMeeting(event,userId);//need to add func AddMeeting
+				
+				if (result)
+				{
+					JOptionPane.showMessageDialog(frameEventCreate,
+						    "Added Meeting Successfully.",
+						    "",
+						    JOptionPane.PLAIN_MESSAGE);
+				}
+				else {
+					JOptionPane.showMessageDialog(frameEventCreate,
+						    "Oops, Something went wrong make sure the inputs are corret",
+						    "",
+						    JOptionPane.PLAIN_MESSAGE);
+					}
+				}
 				
 				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Israel"));
 				
@@ -246,11 +262,9 @@ public class ViewAddNewMeeting
 					data[i][3] = false;
 				}
 				
-				frameEventCreate.dispose();
-				ViewDisplayEvents.DisplayView();
+				
 				
 				}
-			}
 			});
 		
 		

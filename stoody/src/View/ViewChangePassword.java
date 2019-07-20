@@ -51,7 +51,7 @@ public class ViewChangePassword {
 	 		
 	 		String _password;
 	 		_password = newPasswordTextField.getText().toString();
-	 		boolean success = DataLayer.getInstance().ChagngePassword(_password); //Checks if a password is valid	
+	 		boolean success = DataLayer.getInstance().ChangePassword(_password); //Checks if a password is valid	
 	 		
 	 		if (!(success))
 	 		{
@@ -64,10 +64,21 @@ public class ViewChangePassword {
 	 		}
 	 		else
 	 		{
-	 			JOptionPane.showMessageDialog(frame,
-				    "Change password Successfully",
-				    "",
-				    JOptionPane.PLAIN_MESSAGE);
+	 			//int input = JOptionPane.showOptionDialog(frame,
+				//    "Change password Successfully",
+				//    "",
+				//    JOptionPane.PLAIN_MESSAGE);
+	 			
+	 			
+	 			int input = JOptionPane.showOptionDialog(frame, "Change password Successfully", "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+	 			if(input == JOptionPane.OK_OPTION)
+	 			{
+	 			    
+	 				frame.dispose();
+	 				ViewLogin.DisplayView();
+	 				// do something
+	 			}
 	 		}
 	 	}  
 		});  

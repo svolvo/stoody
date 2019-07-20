@@ -10,6 +10,7 @@ import java.util.Properties;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -78,7 +79,7 @@ public class ViewDisplayEvents
 		searchButton.setBounds(50,400,95,30);
 		frame1.add(searchButton);
 		
-		JButton deleteButton = new JButton("Delet");
+		JButton deleteButton = new JButton("Delete");
 		JButton acceptButton = new JButton("Accept");
 		
 		deleteButton.setBounds(50,700,200,40);
@@ -94,6 +95,60 @@ public class ViewDisplayEvents
 	    frame1.add(idLabel);
 	    
 	    frame1.add(datePicker);
+	    
+	    
+	    // add logout option
+	    JButton logout = new JButton("Logout");  
+	    logout.setBounds(900, 400, 195, 30);    
+	    frame1.add(logout);	    
+		logout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				frame1.dispose();
+				ViewLogin.DisplayView();
+			}
+		});
+
+		// Add option to add a new Meeting
+	    JButton addMeetingButton = new JButton("Add Meeting");  
+	    addMeetingButton.setBounds(900, 450, 195, 30);    
+	    frame1.add(addMeetingButton);	    
+	    addMeetingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				ViewAddNewMeeting.DisplayView();
+			}
+		});		
+		
+		if (DataLayer.getInstance().GetCurrentRegularUser().get_userType() == eUserType.student)
+		{
+			// add sign up to courses option if the user is a student
+		    JButton signUpToCoursesButton = new JButton("Course SignUp");  
+		    signUpToCoursesButton.setBounds(900, 500, 195, 30);    
+		    frame1.add(signUpToCoursesButton);	    
+		    signUpToCoursesButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e)
+				{
+					ViewSignUp.DisplayView();
+				}
+			});			
+		}
+		else 
+		{
+			// add an option to add a new course if the user is a teacher
+			// add sign up to courses option if the user is a student
+		    JButton addNewCoureseButton = new JButton("Add Course");  
+		    addNewCoureseButton.setBounds(900, 500, 195, 30);    
+		    frame1.add(addNewCoureseButton);	    
+		    addNewCoureseButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e)
+				{
+					ViewAddNewCourse.DisplayView();
+				}
+			});			
+			
+		}
+	    
 	    
 	    frame1.setSize(1100,600);  
 	    frame1.setLayout(null);  
@@ -222,17 +277,44 @@ public class ViewDisplayEvents
 								deleteButton.addActionListener(new ActionListener(){  
 									public void actionPerformed(ActionEvent e){
 										// search for events
-										DataLayer.getInstance().SetEventStatus(eventList.get(row), false);
-										
+										boolean result = DataLayer.getInstance().SetEventStatus(eventList.get(row), false);
+										if (result)
+										{
+											JOptionPane.showMessageDialog(framePopup,
+												    "Deleted Meeting",
+												    "",
+												    JOptionPane.PLAIN_MESSAGE);
+										}
+										else {
+											JOptionPane.showMessageDialog(framePopup,
+												    "Oops, Something went wrong make sure the inputs are corret",
+												    "",
+												    JOptionPane.PLAIN_MESSAGE);
+											}
 										}
 									});
 								
 								acceptButton.addActionListener(new ActionListener(){  
 									public void actionPerformed(ActionEvent e){
 										// search for events
-										DataLayer.getInstance().SetEventStatus(eventList.get(row), true);
+										boolean result = DataLayer.getInstance().SetEventStatus(eventList.get(row), true);
 										
+										if (result)
+										{
+											JOptionPane.showMessageDialog(framePopup,
+												    "Added Meeting Successfully.",
+												    "",
+												    JOptionPane.PLAIN_MESSAGE);
 										}
+										else {
+											JOptionPane.showMessageDialog(framePopup,
+												    "Oops, Something went wrong make sure the inputs are corret",
+												    "",
+												    JOptionPane.PLAIN_MESSAGE);
+											}
+										}
+										
+										
 									});
 					        	
 					        	

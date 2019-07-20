@@ -447,7 +447,6 @@ public class SQLiteDataLayer {
 			 return false;
 		 
 		 
-		
 		 
 		 int eventId = GetMaxFieldInTable("event_id", "event");
 
@@ -565,14 +564,9 @@ public class SQLiteDataLayer {
 	}
 
 	public static boolean AddCourse(Course course, int userId) {
-		// TODO Auto-generated method stub
-		/*
-		 INSERT INTO course (name, location, day_of_week, start_time, end_time, course_start_date, course_end_date, 
-moed_a_start_date_time, moed_a_end_date_time, moed_a_location, moed_b_start_date_time, moed_b_end_date_time, moed_b_location)
-VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',  
-'2019-07-01 09:00', '2019-07-01 12:00', '8-210', 
-'2019-07-17 09:00', '2019-07-17 12:00', '8-300' );
-		 * */
+		
+		
+		
 		
 		String sql = String.format(
 				"INSERT INTO course (name, location, day_of_week, start_time, end_time, course_start_date, course_end_date, \n" + 
@@ -632,24 +626,38 @@ VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',
 		Date end = DateHelper.AddDays(course.get_courseEndDate(), 1);
 		
 		
-		int count = 1;
+		int recordsCount = 1;
 		while (current.before(end))
 		{
 			// Add course event to events table 
 			StoodyEvent stoodyEvent = new StoodyEvent(eEventType.course, course.get_courseName(), current, DateHelper.AddTime(current, hours, minutes), course.get_location());			
 			if (!AddEvent(stoodyEvent, userId))
 				return false;
-			
-			// Add records to course_events table
-			String sqlUpdateCourseEvents = String.format("INSERT INTO course_events (course_id, event_id) VALUES (%d, %d);", courseId, eventId + count);
-			if (!ExecuteNonQuery(sqlUpdateCourseEvents))
-				return false;
-			
+				
 			// increment current by a week
 			current = DateHelper.AddDays(current, 7);
-			count++;
+			recordsCount++;
 		}
 		
+		// Add Moed A 
+		StoodyEvent moedA = new StoodyEvent(eEventType.test, course.get_courseName() +  "Moed A", course.get_moedA_Start(), course.get_moedA_End(), course.get_locationA());			
+		if (!AddEvent(moedA, userId))
+			return false;
+		recordsCount++;
+		
+		// Add Moed B
+		StoodyEvent moedB = new StoodyEvent(eEventType.test, course.get_courseName() +  "Moed B", course.get_moedA_Start(), course.get_moedB_End(), course.get_locationB());			
+		if (!AddEvent(moedB, userId))
+			return false;
+		recordsCount++;
+		
+		// Add records to course_events table
+		for (int i = 1; i <= recordsCount; i++)
+		{
+			String sqlUpdateCourseEvents = String.format("INSERT INTO course_events (course_id, event_id) VALUES (%d, %d);", courseId, eventId + i);
+			if (!ExecuteNonQuery(sqlUpdateCourseEvents))
+				return false;
+		}
 		
 		
 		
@@ -658,11 +666,11 @@ VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',
 		
 	}
 
-	public static ArrayList<CourseDetails> GetCourseList(int get_id) {
+	public static ArrayList<CourseDetails> GetCourseList(int userId) {
 		
 		ArrayList<CourseDetails> courses = new ArrayList<CourseDetails>();
 		// get all the course id which the users is already subscribed to.
-		String sqlGetUserCourseIds = "SELECT course_id FROM student_courses;";
+		String sqlGetUserCourseIds = String.format("SELECT course_id FROM student_courses WHERE user_id = %d;", userId);
 
 		ArrayList<Integer> userCourses = GetFieldIntList(sqlGetUserCourseIds, "course_id");
 		
@@ -749,8 +757,58 @@ VALUES ('math', 1, '8-200', '19:00', '21:00', '2019-01-01', '2019-06-01',
 				"VALUES (%d, %d);", userId, courseId);
 		
 		return ExecuteNonQuery(updateUserCourses);
+	}
+
+	/**
+	 * Adds an event as a meeting, all the userIDs attendance status is set to unknown.
+	 * @return true if the operation succeeded false otherwise.
+	 */
+	public static boolean AddMeeting(StoodyEvent event, List<Integer> userIds, int ownerId) {
+
+		// add the event for the owner with an attending status.
+		if (!AddEvent(event, ownerId))
+			return false;
+		
+		// event id in table
+		int eventId = GetMaxFieldInTable("event_id", "event");
+
+		// add event with unknown status to all recipients
+		if (userIds != null)
+		{
+			
+			for (int userId : userIds)
+			{
+				if (userId == ownerId)
+					continue;
+				
+				String insertUserEvent = String.format("INSERT into user_events (user_id, event_id, status) VALUES (%d, %d, %d);", 
+						 userId, eventId, eEventStatus._unknown.ordinal());
+				
+				
+				if (!ExecuteNonQuery(insertUserEvent))
+					return false;
+			}
+		}
+		
+		return true;
+	}
+
+	public static boolean ChangePassword(int userId, String newPassword) {
+		
+		// update password SQL
+		String sqlUpdatePassword = String.format("UPDATE user SET password = '%s' WHERE id = %d;", newPassword, userId);
+		
+		return ExecuteNonQuery(sqlUpdatePassword);
+	}
+
+	public static boolean SetEventStatus(int id, int userId, boolean willAttend) {
+
+		int status = (willAttend) ? eEventStatus.attending.ordinal() : eEventStatus.cancelled.ordinal();
+		
+		String sqlUpdateEventStatus = String.format("UPDATE user_events SET status = %d WHERE user_id = %d;", status, userId);
+
+		return ExecuteNonQuery(sqlUpdateEventStatus);
 	}	
-	
 
 	
 	
